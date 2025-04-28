@@ -1,8 +1,10 @@
 package com.github.petrovyegor.currencyexchange;
 
+import com.fasterxml.jackson.core.exc.StreamWriteException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.petrovyegor.currencyexchange.model.Currency;
-import jakarta.servlet.ServletException;
+import com.github.petrovyegor.currencyexchange.model.ExchangeRate;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,13 +14,18 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CurrenciesServlet extends HttpServlet {
+@WebServlet("/exchangeRates")
+public class ExchangeRatesServlet extends HttpServlet {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            List<Currency> currencies = getAllCurrencies();
+            List<ExchangeRate> currencies = getAllExchangeRates();
 
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
@@ -33,38 +40,36 @@ public class CurrenciesServlet extends HttpServlet {
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"error\":\"Database error: " + e.getMessage() + "\"}");
+        } catch (DatabindException e) {
+            throw new RuntimeException(e);
+        } catch (StreamWriteException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-    }
-
-//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {            PrintWriter printWriter = response.getWriter();
-//            printWriter.println("<html>");
-//            printWriter.println("<h1>test</h1>");
-//            printWriter.println("</html>");
-//    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
 
-    private List<Currency> getAllCurrencies() throws ClassNotFoundException, SQLException {
+    private List<ExchangeRate> getAllExchangeRates() throws ClassNotFoundException, SQLException {
         Class.forName("org.sqlite.JDBC");
         Connection co = DriverManager.getConnection("jdbc:sqlite:C:\\roadmap\\CurrencyExchange\\CurrencyExchange.sqlite");
         try (co; Statement statement = co.createStatement();) {
-            String query = "SELECT Id, Code, FullName, Sign FROM Currencies;";
+            String query = "SELECT id, basecurrencyid, targetcurrencyid, rate FROM ExchangeRates;";
             ResultSet rs = statement.executeQuery(query);
 
-            List<Currency> currencies = new ArrayList<>();
+            List<ExchangeRate> exchangeRates = new ArrayList<>();
 
             while (rs.next()) {
                 int id = rs.getInt(1);//можно указать номер столбца, либо полное название
-                String code = rs.getString(2);
-                String fullName = rs.getString(3);
-                String sign = rs.getString(4);
-                currencies.add(new Currency(id, code, fullName, sign));
+                int baseCurrencyId = rs.getInt(2);
+                int targetCurrencyId = rs.getInt(3);
+                double rate = rs.getDouble(4);
+                exchangeRates.add(new ExchangeRate(id, baseCurrencyId, targetCurrencyId, rate));
             }
-            rs.close();//закрываем резалт сэт
-            return currencies;
+            rs.close();
+            return exchangeRates;
         }
+
     }
+
 }

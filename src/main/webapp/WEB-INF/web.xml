@@ -9,6 +9,6 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>CurrenciesServlet</servlet-name>
-        <url-pattern>/currencies</url-pattern>
+        <url-pattern>/currencies/*</url-pattern>
     </servlet-mapping>
 </web-app>
