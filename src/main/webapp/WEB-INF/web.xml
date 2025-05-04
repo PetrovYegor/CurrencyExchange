@@ -5,7 +5,7 @@
          version="6.0">
     <servlet>
         <servlet-name>CurrencyServlet</servlet-name>
-        <servlet-class>com.github.petrovyegor.currencyexchange.CurrencyServlet</servlet-class>
+        <servlet-class>com.github.petrovyegor.currencyexchange.controller.CurrencyController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CurrencyServlet</servlet-name>

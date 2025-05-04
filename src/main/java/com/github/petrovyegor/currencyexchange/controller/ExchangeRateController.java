@@ -1,4 +1,4 @@
-package com.github.petrovyegor.currencyexchange;
+package com.github.petrovyegor.currencyexchange.controller;
 
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/exchangeRates")
-public class ExchangeRatesServlet extends HttpServlet {
+public class ExchangeRateController extends HttpServlet {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
