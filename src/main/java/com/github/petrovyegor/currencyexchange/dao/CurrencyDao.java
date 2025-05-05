@@ -3,14 +3,12 @@ package com.github.petrovyegor.currencyexchange.dao;
 import com.github.petrovyegor.currencyexchange.model.Currency;
 import com.github.petrovyegor.currencyexchange.util.DatabaseManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CurrencyDao {
-    public Currency findByCode(String code) throws SQLException {
+    public Currency getByCode(String code) throws SQLException {
         try (Connection co = DatabaseManager.getConnection();
              PreparedStatement statement = co.prepareStatement("SELECT Id, Code, FullName, Sign FROM Currencies WHERE Code = ?")) {
             statement.setString(1, code.toUpperCase());
@@ -30,8 +28,22 @@ public class CurrencyDao {
         }
     }
 
-    public List<Currency> getAll() {
-        return null;
+    public List<Currency> getAll() throws SQLException {
+        List<Currency> result = new ArrayList<>();
+        try (Connection co = DatabaseManager.getConnection();
+             Statement statement = co.createStatement()) {
+            ResultSet resultSet = statement.executeQuery("SELECT Id, Code, FullName, Sign FROM Currencies");
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String code = resultSet.getString("code");
+                String fullName = resultSet.getString("fullname");
+                String sign = resultSet.getString("sign");
+                result.add(new Currency(id, code, fullName, sign));
+            }
+            return result;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Currency save(String code, String name, String sign) throws SQLException {
