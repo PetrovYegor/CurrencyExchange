@@ -23,7 +23,6 @@ public final class DatabaseManager {
             properties.load(inputStream);
             DB_URL = properties.getProperty("db.url");
 
-
         } catch (Exception e) {//слишком широкий уровень ошибок
             throw new RuntimeException("Failed to load config", e);
         }
