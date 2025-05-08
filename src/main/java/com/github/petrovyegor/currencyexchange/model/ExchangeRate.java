@@ -8,8 +8,8 @@ public class ExchangeRate {
 
     public ExchangeRate(int id, int baseCurrencyId, int targetCurrencyId, double rate) {
         this.id = id;
-        this.baseCurrencyId = id;
-        this.targetCurrencyId = id;
+        this.baseCurrencyId = baseCurrencyId;
+        this.targetCurrencyId = targetCurrencyId;
         this.rate = rate;
     }
 

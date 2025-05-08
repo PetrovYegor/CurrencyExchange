@@ -1,6 +1,7 @@
 package com.github.petrovyegor.currencyexchange.dao;
 
 import com.github.petrovyegor.currencyexchange.model.Currency;
+import com.github.petrovyegor.currencyexchange.model.ExchangeRate;
 import com.github.petrovyegor.currencyexchange.util.DatabaseManager;
 
 import java.sql.*;
@@ -64,6 +65,29 @@ public class CurrencyDao {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    public Currency getById(int id) throws SQLException {
+        Currency result = null;
+        String query = "SELECT Id, Code, FullName, Sign FROM Currencies WHERE id = ?";
+        try (Connection co = DatabaseManager.getConnection();
+             PreparedStatement statement = co.prepareStatement(query)) {
+            statement.setInt(1, id);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                String code = rs.getString("code");
+                String name = rs.getString("fullname");
+                String sign = rs.getString("sign");
+                rs.close();//везде проверить, что закрываю
+                result = new Currency(id, code, name, sign);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        if (result != null){
+            return result;
+        } else {
+            throw new RuntimeException();
+        }
     }
 }

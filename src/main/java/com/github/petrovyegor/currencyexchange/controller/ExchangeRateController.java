@@ -3,6 +3,7 @@ package com.github.petrovyegor.currencyexchange.controller;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.petrovyegor.currencyexchange.dto.ExchangeRateResponseDTO;
 import com.github.petrovyegor.currencyexchange.model.Currency;
 import com.github.petrovyegor.currencyexchange.model.ExchangeRate;
 import com.github.petrovyegor.currencyexchange.service.ExchangeRateService;
@@ -30,7 +31,7 @@ public class ExchangeRateController extends HttpServlet {
         String path = request.getPathInfo();
         if (path == null) {
             try {
-                List<ExchangeRate> exchangeRates = exchangeRateService.getAll();
+                List<ExchangeRateResponseDTO> exchangeRates = exchangeRateService.getAll();
                 response.setStatus(200);
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
