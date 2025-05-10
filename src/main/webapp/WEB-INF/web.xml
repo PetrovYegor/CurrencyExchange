@@ -4,11 +4,20 @@
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
     <servlet>
-        <servlet-name>CurrencyServlet</servlet-name>
+        <servlet-name>CurrencyController</servlet-name>
         <servlet-class>com.github.petrovyegor.currencyexchange.controller.CurrencyController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ExchangeRateController</servlet-name>
+        <servlet-class>com.github.petrovyegor.currencyexchange.controller.ExchangeRateController</servlet-class>
+    </servlet>
+
     <servlet-mapping>
-        <servlet-name>CurrencyServlet</servlet-name>
+        <servlet-name>CurrencyController</servlet-name>
         <url-pattern>/currencies/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExchangeRateController</servlet-name>
+        <url-pattern>/exchangeRates/*</url-pattern>
     </servlet-mapping>
 </web-app>
