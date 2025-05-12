@@ -37,8 +37,8 @@ public class ExchangeRateDao {
             statement.setInt(1, baseCurrencyId);
             statement.setInt(2, targetCurrencyId);
             ResultSet rs = statement.executeQuery();
-            //if (rs.next()) {
-            while (rs.next()) {
+            if (rs.next()) {
+                //while (rs.next()) {
                 int id = rs.getInt("id");
                 int resultBaseCurrencyId = rs.getInt("basecurrencyid");
                 int resultTargetCurrencyId = rs.getInt("targetcurrencyid");
@@ -46,28 +46,31 @@ public class ExchangeRateDao {
                 rs.close();//везде проверить, что закрываю
                 result = new ExchangeRate(id, resultBaseCurrencyId, resultTargetCurrencyId, rate);
             }
+//            } else {
+//                return null;
+//            }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         return result;
     }
-//    public ExchangeRateResponseDTO save(String baseCurrencyCode, String targetCurrencyCode, double rate) throws SQLException {
-//        String query = "INSERT INTO Currencies (Code, FullName, Sign) VALUES (?, ?, ?);";
-//        try (Connection co = DatabaseManager.getConnection(); PreparedStatement statement = co.prepareStatement(query)) {
-//            statement.setString(1, code.toUpperCase());
-//            statement.setString(2, name);
-//            statement.setString(3, sign);
-//            statement.executeUpdate();
-//            ResultSet resultSet = statement.getGeneratedKeys();
-//
-//            if (resultSet.next()) {
-//                int id = resultSet.getInt(1);
-//                return new Currency(id, code, name, sign);
-//            } else {
-//                throw new SQLException("Failed to get generated ID");
-//            }
-//        } catch (ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    public ExchangeRate save(int baseCurrencyId, int targetCurrencyId, double rate) throws SQLException {
+        String query = "INSERT INTO ExchangeRates (BaseCurrencyId, TargetCurrencyId, Rate) VALUES (?, ?, ?)";
+        try (Connection co = DatabaseManager.getConnection(); PreparedStatement statement = co.prepareStatement(query)) {
+            statement.setInt(1, baseCurrencyId);
+            statement.setInt(2, targetCurrencyId);
+            statement.setDouble(3, rate);
+            statement.executeUpdate();
+            ResultSet resultSet = statement.getGeneratedKeys();
+
+            if (resultSet.next()) {
+                int id = resultSet.getInt(1);
+                return new ExchangeRate(id, baseCurrencyId, targetCurrencyId, rate);
+            } else {
+                throw new SQLException("Failed to get generated ID");
+            }
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
