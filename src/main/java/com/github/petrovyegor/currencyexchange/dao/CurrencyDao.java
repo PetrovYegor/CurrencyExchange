@@ -27,7 +27,7 @@ public class CurrencyDao {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-    }
+    }//test
 
     public List<Currency> getAll() throws SQLException {
         List<Currency> result = new ArrayList<>();
