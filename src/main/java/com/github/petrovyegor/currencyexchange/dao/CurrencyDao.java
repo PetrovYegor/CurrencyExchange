@@ -1,7 +1,6 @@
 package com.github.petrovyegor.currencyexchange.dao;
 
 import com.github.petrovyegor.currencyexchange.model.Currency;
-import com.github.petrovyegor.currencyexchange.model.ExchangeRate;
 import com.github.petrovyegor.currencyexchange.util.DatabaseManager;
 
 import java.sql.*;
@@ -27,7 +26,7 @@ public class CurrencyDao {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-    }//test
+    }
 
     public List<Currency> getAll() throws SQLException {
         List<Currency> result = new ArrayList<>();
@@ -84,7 +83,7 @@ public class CurrencyDao {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        if (result != null){
+        if (result != null) {
             return result;
         } else {
             throw new RuntimeException();
