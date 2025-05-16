@@ -1,13 +1,13 @@
 package com.github.petrovyegor.currencyexchange.model;
 
-public class Exchange {
+public class Conversion {
     private Currency baseCurrency;
     private Currency targetCurrency;
     private double rate;
     private double amount;
     private double convertedAmount;
 
-    public Exchange (Currency baseCurrency, Currency targetCurrency, double rate, double amount, double convertedAmount){
+    public Conversion(Currency baseCurrency, Currency targetCurrency, double rate, double amount, double convertedAmount){
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
         this.rate = rate;
