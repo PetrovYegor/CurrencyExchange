@@ -47,6 +47,11 @@ public class ExchangeRateService {
         return currencyDao.getByCode(code);
     }
 
+    public ExchangeRateResponseDTO updateRate(double newRate, int exchangeRateId, Currency baseCurrency, Currency targetCurrency) throws SQLException {
+        exchangeRateDao.updateRate(newRate, exchangeRateId);
+        return new ExchangeRateResponseDTO(exchangeRateId, baseCurrency, targetCurrency, newRate);
+    }
+
 //    public ExchangeRateResponseDTO createExchangeRate(String baseCurrencyCode, String targetCurrencyCode, double rate) throws SQLException {
 //        return exchangeRateDao.save(baseCurrencyCode, targetCurrencyCode, rate);
 //    }

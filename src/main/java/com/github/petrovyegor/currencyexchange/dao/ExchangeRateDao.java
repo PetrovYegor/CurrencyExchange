@@ -46,14 +46,12 @@ public class ExchangeRateDao {
                 rs.close();//везде проверить, что закрываю
                 result = new ExchangeRate(id, resultBaseCurrencyId, resultTargetCurrencyId, rate);
             }
-//            } else {
-//                return null;
-//            }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         return result;
     }
+
     public ExchangeRate save(int baseCurrencyId, int targetCurrencyId, double rate) throws SQLException {
         String query = "INSERT INTO ExchangeRates (BaseCurrencyId, TargetCurrencyId, Rate) VALUES (?, ?, ?)";
         try (Connection co = DatabaseManager.getConnection(); PreparedStatement statement = co.prepareStatement(query)) {
@@ -69,6 +67,18 @@ public class ExchangeRateDao {
             } else {
                 throw new SQLException("Failed to get generated ID");
             }
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateRate(double newRate, int exchangeRateId) throws SQLException {
+        String query = "UPDATE ExchangeRates SET Rate = ? WHERE Id = ?;";
+        try (Connection co = DatabaseManager.getConnection();
+             PreparedStatement statement = co.prepareStatement(query)) {
+            statement.setDouble(1, newRate);
+            statement.setInt(2, exchangeRateId);
+            statement.executeUpdate();
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
