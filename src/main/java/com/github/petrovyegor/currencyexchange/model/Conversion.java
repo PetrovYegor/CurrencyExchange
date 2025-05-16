@@ -1,26 +1,26 @@
 package com.github.petrovyegor.currencyexchange.model;
 
 public class Conversion {
-    private Currency baseCurrency;
-    private Currency targetCurrency;
+    private int baseCurrencyId;
+    private int targetCurrencyId;
     private double rate;
     private double amount;
     private double convertedAmount;
 
-    public Conversion(Currency baseCurrency, Currency targetCurrency, double rate, double amount, double convertedAmount){
-        this.baseCurrency = baseCurrency;
-        this.targetCurrency = targetCurrency;
+    public Conversion(int baseCurrencyId, int targetCurrencyId, double rate, double amount, double convertedAmount){
+        this.baseCurrencyId = baseCurrencyId;
+        this.targetCurrencyId = targetCurrencyId;
         this.rate = rate;
         this.amount = amount;
         this.convertedAmount = amount;
     }
 
-    public Currency getBaseCurrency() {
-        return baseCurrency;
+    public int getBaseCurrency() {
+        return baseCurrencyId;
     }
 
-    public Currency getTargetCurrency() {
-        return targetCurrency;
+    public int getTargetCurrency() {
+        return targetCurrencyId;
     }
 
     public double getRate() {
