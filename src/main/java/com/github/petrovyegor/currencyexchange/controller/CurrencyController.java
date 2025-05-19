@@ -1,6 +1,7 @@
 package com.github.petrovyegor.currencyexchange.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.petrovyegor.currencyexchange.dto.CurrencyDTO;
 import com.github.petrovyegor.currencyexchange.model.Currency;
 import com.github.petrovyegor.currencyexchange.service.CurrencyService;
 import jakarta.servlet.http.HttpServlet;
@@ -49,7 +50,7 @@ public class CurrencyController extends HttpServlet {
         String path = request.getPathInfo();
         if (path == null) {
             try {
-                List<Currency> currencies = currencyService.getAll();
+                List<CurrencyDTO> currencies = currencyService.getAll();
                 response.setStatus(200);
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");

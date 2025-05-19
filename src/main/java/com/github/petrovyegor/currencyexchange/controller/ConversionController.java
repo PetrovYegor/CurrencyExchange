@@ -40,7 +40,7 @@ public class ConversionController extends HttpServlet {
 //                return;
 //            }
 
-            exchangeRate = exchangeRateService.updateRate(rate, exchangeRate.getId(), baseCurrency, targetCurrency);
+            //exchangeRate = exchangeRateService.updateRate(rate, exchangeRate.getId(), baseCurrency, targetCurrency);
             response.setStatus(200);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
