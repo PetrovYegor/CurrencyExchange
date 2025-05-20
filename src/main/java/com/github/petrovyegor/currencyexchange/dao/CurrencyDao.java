@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CurrencyDao {
-    public Currency getByCode(String code) throws SQLException {
+    public Currency getByCode(String code) throws SQLException, ClassNotFoundException {
         try (Connection co = DatabaseManager.getConnection();
              PreparedStatement statement = co.prepareStatement("SELECT Id, Code, FullName, Sign FROM Currencies WHERE Code = ?")) {
             statement.setString(1, code.toUpperCase());
@@ -23,16 +23,15 @@ public class CurrencyDao {
             } else {
                 return null;
             }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
     }
 
-    public List<Currency> getAll() throws SQLException {
+    public List<Currency> getAll() throws SQLException, ClassNotFoundException {
         List<Currency> result = new ArrayList<>();
+        String query = "SELECT Id, Code, FullName, Sign FROM Currencies";
         try (Connection co = DatabaseManager.getConnection();
-             Statement statement = co.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT Id, Code, FullName, Sign FROM Currencies");
+             Statement statement = co.createStatement();
+            ResultSet resultSet = statement.executeQuery(query)) {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String code = resultSet.getString("code");
@@ -41,23 +40,21 @@ public class CurrencyDao {
                 result.add(new Currency(id, code, fullName, sign));
             }
             return result;
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
+        }     }
 
-    public Currency save(String code, String name, String sign) throws SQLException {
+    public Currency save(Currency source) throws SQLException {
         String query = "INSERT INTO Currencies (Code, FullName, Sign) VALUES (?, ?, ?);";
         try (Connection co = DatabaseManager.getConnection(); PreparedStatement statement = co.prepareStatement(query)) {
-            statement.setString(1, code.toUpperCase());
-            statement.setString(2, name);
-            statement.setString(3, sign);
+            statement.setString(1, source.getCode());
+            statement.setString(2, source.getFullName());
+            statement.setString(3, source.getSign());
             statement.executeUpdate();
             ResultSet resultSet = statement.getGeneratedKeys();
 
             if (resultSet.next()) {
                 int id = resultSet.getInt(1);
-                return new Currency(id, code, name, sign);
+                source.setId(id);
+                return source;
             } else {
                 throw new SQLException("Failed to get generated ID");
             }

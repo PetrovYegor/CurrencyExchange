@@ -11,11 +11,12 @@ import java.util.List;
 public class CurrencyService {
     private final CurrencyDao currencyDao = new CurrencyDao();
 
-    public Currency createCurrency(String code, String name, String sign) throws SQLException {
-        return currencyDao.save(code, name, sign);
+    public CurrencyDTO createCurrency(CurrencyDTO currencyDTO) throws SQLException {
+        Currency currency =  currencyDao.save(toCurrency(currencyDTO));
+        return toDTO(currency);
     }
 
-    public List<CurrencyDTO> getAll() throws SQLException {
+    public List<CurrencyDTO> getAll() throws SQLException, ClassNotFoundException {
         List<CurrencyDTO> result = new ArrayList<>();
         List<Currency> currencies = currencyDao.getAll();
         for (Currency currency : currencies) {
@@ -24,12 +25,16 @@ public class CurrencyService {
         return result;
     }
 
-    public Currency getByCode(String code) throws SQLException {
-        return currencyDao.getByCode(code);
+    public CurrencyDTO getByCode(String code) throws SQLException, ClassNotFoundException {
+        return toDTO(currencyDao.getByCode(code));
     }
 
     private CurrencyDTO toDTO(Currency currency) {
         return new CurrencyDTO(currency.getId(), currency.getCode(), currency.getFullName(), currency.getSign());
+    }
+
+    private Currency toCurrency(CurrencyDTO source){
+        return new Currency(source.getId(), source.getCode(), source.getFullName(), source.getSign());
     }
 
 }

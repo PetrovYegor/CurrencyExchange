@@ -29,11 +29,12 @@ public class CurrencyController extends HttpServlet {
         }
 
         try {
+            CurrencyDTO currencyDTO = new CurrencyDTO(0, code.toUpperCase(), name, sign);
             if (currencyService.getByCode(code.toUpperCase()) != null){
                 response.sendError(409, "Currency already exists!");
                 return;
             }
-            Currency currency = currencyService.createCurrency(code, name, sign);
+            CurrencyDTO currency = currencyService.createCurrency(currencyDTO);
             response.setStatus(201);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
@@ -42,6 +43,8 @@ public class CurrencyController extends HttpServlet {
             response.sendError(400, e.getMessage());
         } catch (SQLException e) {
             response.sendError(500, e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -59,6 +62,8 @@ public class CurrencyController extends HttpServlet {
             } catch (SQLException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.getWriter().write("{\"error\":\"Database error: " + e.getMessage() + "\"}");
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
 
@@ -73,8 +78,8 @@ public class CurrencyController extends HttpServlet {
             return;
         }
         try {
-            Currency currency = currencyService.getByCode(code);
-            if (currency == null){
+            CurrencyDTO currencyDTO = currencyService.getByCode(code);
+            if (currencyDTO == null){
                 response.sendError(404, "Currency doesn't exists!");
                 return;
             }
@@ -82,11 +87,13 @@ public class CurrencyController extends HttpServlet {
             response.setStatus(200);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-            objectMapper.writeValue(response.getWriter(), currency);
+            objectMapper.writeValue(response.getWriter(), currencyDTO);
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"error\":\"Database error: " + e.getMessage() + "\"}");
 
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }
