@@ -1,6 +1,7 @@
 package com.github.petrovyegor.currencyexchange.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.petrovyegor.currencyexchange.dto.CurrencyDTO;
 import com.github.petrovyegor.currencyexchange.dto.ExchangeRateResponseDTO;
 import com.github.petrovyegor.currencyexchange.model.Currency;
 import com.github.petrovyegor.currencyexchange.service.ExchangeRateService;
@@ -83,6 +84,8 @@ public class ExchangeRateController extends HttpServlet {
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"error\":\"Database error: " + e.getMessage() + "\"}");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -98,8 +101,8 @@ public class ExchangeRateController extends HttpServlet {
         }
 
         try {
-            Currency baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode.toUpperCase());
-            Currency targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode.toUpperCase());
+            CurrencyDTO baseCurrency = exchangeRateService.to);
+            CurrencyDTO targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode.toUpperCase());
             if (baseCurrency == null || targetCurrency == null) {
                 response.sendError(404, "Base or target, or both currency doesn't exists!");
                 return;
@@ -115,7 +118,7 @@ public class ExchangeRateController extends HttpServlet {
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             objectMapper.writeValue(response.getWriter(), exchangeRate);
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"error\":\"Database error: " + e.getMessage() + "\"}");
         }
@@ -169,6 +172,8 @@ public class ExchangeRateController extends HttpServlet {
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"error\":\"Database error: " + e.getMessage() + "\"}");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }

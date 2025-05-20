@@ -13,28 +13,34 @@ public class CurrencyService {
 
     public CurrencyDTO createCurrency(CurrencyDTO currencyDTO) throws SQLException {
         Currency currency =  currencyDao.save(toCurrency(currencyDTO));
-        return toDTO(currency);
+        return toCurrencyDTO(currency);
     }
 
     public List<CurrencyDTO> getAll() throws SQLException, ClassNotFoundException {
         List<CurrencyDTO> result = new ArrayList<>();
         List<Currency> currencies = currencyDao.getAll();
         for (Currency currency : currencies) {
-            result.add(toDTO(currency));
+            result.add(toCurrencyDTO(currency));
         }
         return result;
     }
 
     public CurrencyDTO getByCode(String code) throws SQLException, ClassNotFoundException {
-        return toDTO(currencyDao.getByCode(code));
+        return toCurrencyDTO(currencyDao.getByCode(code));
     }
 
-    private CurrencyDTO toDTO(Currency currency) {
-        return new CurrencyDTO(currency.getId(), currency.getCode(), currency.getFullName(), currency.getSign());
+    private CurrencyDTO toCurrencyDTO(Currency currency) {
+        if (currency != null){
+            return new CurrencyDTO(currency.getId(), currency.getCode(), currency.getFullName(), currency.getSign());
+        }
+        return null;
     }
 
     private Currency toCurrency(CurrencyDTO source){
-        return new Currency(source.getId(), source.getCode(), source.getFullName(), source.getSign());
+        if (source != null){
+            return new Currency(source.getId(), source.getCode(), source.getFullName(), source.getSign());
+        }
+        return null;
     }
 
 }

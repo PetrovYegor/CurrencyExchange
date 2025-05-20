@@ -9,10 +9,12 @@ import java.util.List;
 
 public class CurrencyDao {
     public Currency getByCode(String code) throws SQLException, ClassNotFoundException {
+        String query = "SELECT Id, Code, FullName, Sign FROM Currencies WHERE Code = ?";
+        ResultSet resultSet = null;
         try (Connection co = DatabaseManager.getConnection();
-             PreparedStatement statement = co.prepareStatement("SELECT Id, Code, FullName, Sign FROM Currencies WHERE Code = ?")) {
+             PreparedStatement statement = co.prepareStatement(query)) {
             statement.setString(1, code.toUpperCase());
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return new Currency(
                         resultSet.getInt("id"),
@@ -23,6 +25,10 @@ public class CurrencyDao {
             } else {
                 return null;
             }
+        } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
         }
     }
 
@@ -31,7 +37,7 @@ public class CurrencyDao {
         String query = "SELECT Id, Code, FullName, Sign FROM Currencies";
         try (Connection co = DatabaseManager.getConnection();
              Statement statement = co.createStatement();
-            ResultSet resultSet = statement.executeQuery(query)) {
+             ResultSet resultSet = statement.executeQuery(query)) {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String code = resultSet.getString("code");
@@ -40,7 +46,8 @@ public class CurrencyDao {
                 result.add(new Currency(id, code, fullName, sign));
             }
             return result;
-        }     }
+        }
+    }
 
     public Currency save(Currency source) throws SQLException {
         String query = "INSERT INTO Currencies (Code, FullName, Sign) VALUES (?, ?, ?);";
@@ -65,25 +72,27 @@ public class CurrencyDao {
 
     public Currency getById(int id) throws SQLException {
         Currency result = null;
+        ResultSet resultSet = null;
         String query = "SELECT Id, Code, FullName, Sign FROM Currencies WHERE id = ?";
         try (Connection co = DatabaseManager.getConnection();
              PreparedStatement statement = co.prepareStatement(query)) {
             statement.setInt(1, id);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                String code = rs.getString("code");
-                String name = rs.getString("fullname");
-                String sign = rs.getString("sign");
-                rs.close();//везде проверить, что закрываю
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                String code = resultSet.getString("code");
+                String name = resultSet.getString("fullname");
+                String sign = resultSet.getString("sign");
                 result = new Currency(id, code, name, sign);
             }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
-        }
-        if (result != null) {
-            return result;
-        } else {
-            throw new RuntimeException();
+        } finally {
+            resultSet.close();
+            if (result != null) {
+                return result;
+            } else {
+                throw new RuntimeException();
+            }
         }
     }
 }

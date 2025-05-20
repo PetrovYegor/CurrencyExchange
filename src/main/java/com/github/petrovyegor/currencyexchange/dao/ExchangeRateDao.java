@@ -10,11 +10,10 @@ import java.util.List;
 public class ExchangeRateDao {
     public List<ExchangeRate> getAll() throws SQLException {
         List<ExchangeRate> result = new ArrayList<>();
+        String query = "SELECT id, basecurrencyid, targetcurrencyid, rate FROM ExchangeRates";
         try (Connection co = DatabaseManager.getConnection();
-             Statement statement = co.createStatement()) {
-            String query = "SELECT id, basecurrencyid, targetcurrencyid, rate FROM ExchangeRates";
-            ResultSet rs = statement.executeQuery(query);
-
+             Statement statement = co.createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
             while (rs.next()) {
                 int id = rs.getInt("id");
                 int baseCurrencyId = rs.getInt("basecurrencyid");
@@ -22,7 +21,6 @@ public class ExchangeRateDao {
                 double rate = rs.getDouble("rate");
                 result.add(new ExchangeRate(id, baseCurrencyId, targetCurrencyId, rate));
             }
-            rs.close();
             return result;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -31,35 +29,38 @@ public class ExchangeRateDao {
 
     public ExchangeRate getByCurrenciesIds(int baseCurrencyId, int targetCurrencyId) throws SQLException {
         ExchangeRate result = null;
+        ResultSet resultSet = null;
         String query = "SELECT id, basecurrencyid, targetcurrencyid, rate FROM ExchangeRates WHERE basecurrencyid = ? AND targetcurrencyid = ?";
         try (Connection co = DatabaseManager.getConnection();
              PreparedStatement statement = co.prepareStatement(query)) {
             statement.setInt(1, baseCurrencyId);
             statement.setInt(2, targetCurrencyId);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                //while (rs.next()) {
-                int id = rs.getInt("id");
-                int resultBaseCurrencyId = rs.getInt("basecurrencyid");
-                int resultTargetCurrencyId = rs.getInt("targetcurrencyid");
-                double rate = rs.getDouble("rate");
-                rs.close();//везде проверить, что закрываю
-                result = new ExchangeRate(id, resultBaseCurrencyId, resultTargetCurrencyId, rate);
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                double rate = resultSet.getDouble("rate");
+                resultSet.close();//везде проверить, что закрываю
+                result = new ExchangeRate(id, baseCurrencyId, targetCurrencyId, rate);
             }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            return result;
         }
-        return result;
     }
 
     public ExchangeRate save(int baseCurrencyId, int targetCurrencyId, double rate) throws SQLException {
         String query = "INSERT INTO ExchangeRates (BaseCurrencyId, TargetCurrencyId, Rate) VALUES (?, ?, ?)";
+        ResultSet resultSet = null;
         try (Connection co = DatabaseManager.getConnection(); PreparedStatement statement = co.prepareStatement(query)) {
             statement.setInt(1, baseCurrencyId);
             statement.setInt(2, targetCurrencyId);
             statement.setDouble(3, rate);
             statement.executeUpdate();
-            ResultSet resultSet = statement.getGeneratedKeys();
+            resultSet = statement.getGeneratedKeys();
 
             if (resultSet.next()) {
                 int id = resultSet.getInt(1);
@@ -69,6 +70,10 @@ public class ExchangeRateDao {
             }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (resultSet != null){
+                resultSet.close();
+            }
         }
     }
 

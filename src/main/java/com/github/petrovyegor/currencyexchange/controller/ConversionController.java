@@ -48,6 +48,8 @@ public class ConversionController extends HttpServlet {
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"error\":\"Database error: " + e.getMessage() + "\"}");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
 

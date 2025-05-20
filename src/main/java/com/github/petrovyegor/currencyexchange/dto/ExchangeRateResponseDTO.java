@@ -5,11 +5,11 @@ import com.github.petrovyegor.currencyexchange.model.Currency;
 public class ExchangeRateResponseDTO {
 
     private int id;
-    private Currency baseCurrency;
-    private Currency targetCurrency;
+    private CurrencyDTO baseCurrency;
+    private CurrencyDTO targetCurrency;
     private double rate;
 
-    public ExchangeRateResponseDTO(int id, Currency baseCurrency, Currency targetCurrency, double rate) {
+    public ExchangeRateResponseDTO(int id, CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, double rate) {
         this.id = id;
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
@@ -20,11 +20,11 @@ public class ExchangeRateResponseDTO {
         return id;
     }
 
-    public Currency getBaseCurrency() {
+    public CurrencyDTO getBaseCurrency() {
         return baseCurrency;
     }
 
-    public Currency getTargetCurrency() {
+    public CurrencyDTO getTargetCurrency() {
         return targetCurrency;
     }
 
