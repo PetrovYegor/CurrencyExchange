@@ -2,8 +2,7 @@ package com.github.petrovyegor.currencyexchange.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.petrovyegor.currencyexchange.dto.CurrencyDTO;
-import com.github.petrovyegor.currencyexchange.dto.ExchangeRateResponseDTO;
-import com.github.petrovyegor.currencyexchange.model.Currency;
+import com.github.petrovyegor.currencyexchange.dto.ExchangeRateDTO;
 import com.github.petrovyegor.currencyexchange.service.ExchangeRateService;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -48,7 +47,6 @@ public class ExchangeRateController extends HttpServlet {
             return;
         }
 
-
         if (parts.length < 2) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid exchange rate codes");
             return;
@@ -62,15 +60,15 @@ public class ExchangeRateController extends HttpServlet {
             double rate = Double.parseDouble(body.split("=")[1]);
             String baseCurrencyCode = pairOfCodes.substring(0, 3);
             String targetCurrencyCode = pairOfCodes.substring(3);
-            Currency baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
-            Currency targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode);
+            CurrencyDTO baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
+            CurrencyDTO targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode);
 
             if (baseCurrency == null || targetCurrency == null) {
                 response.sendError(404, "Base or target, or both currency doesn't exists!");
                 return;
             }
 
-            ExchangeRateResponseDTO exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);
+            ExchangeRateDTO exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);
             if (exchangeRate == null) {
                 response.sendError(404, "Exchange rate doesn't exists!");
                 return;
@@ -101,7 +99,7 @@ public class ExchangeRateController extends HttpServlet {
         }
 
         try {
-            CurrencyDTO baseCurrency = exchangeRateService.to);
+            CurrencyDTO baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode.toUpperCase());
             CurrencyDTO targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode.toUpperCase());
             if (baseCurrency == null || targetCurrency == null) {
                 response.sendError(404, "Base or target, or both currency doesn't exists!");
@@ -113,7 +111,7 @@ public class ExchangeRateController extends HttpServlet {
                 return;
             }
 
-            ExchangeRateResponseDTO exchangeRate = exchangeRateService.createExchangeRate(baseCurrency, targetCurrency, Double.parseDouble(rate));
+            ExchangeRateDTO exchangeRate = exchangeRateService.createExchangeRate(baseCurrency, targetCurrency, Double.parseDouble(rate));
             response.setStatus(201);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
@@ -128,7 +126,7 @@ public class ExchangeRateController extends HttpServlet {
         String path = request.getPathInfo();
         if (path == null) {
             try {
-                List<ExchangeRateResponseDTO> exchangeRates = exchangeRateService.getAll();
+                List<ExchangeRateDTO> exchangeRates = exchangeRateService.getAll();
                 response.setStatus(200);
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
@@ -151,15 +149,15 @@ public class ExchangeRateController extends HttpServlet {
         try {
             String baseCurrencyCode = pairOfCodes.substring(0, 3);
             String targetCurrencyCode = pairOfCodes.substring(3);
-            Currency baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
-            Currency targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode);
+            CurrencyDTO baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
+            CurrencyDTO targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode);
 
             if (baseCurrency == null || targetCurrency == null) {
                 response.sendError(404, "Base or target, or both currency doesn't exists!");
                 return;
             }
 
-            ExchangeRateResponseDTO exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);
+            ExchangeRateDTO exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);
             if (exchangeRate == null) {
                 response.sendError(404, "Exchange rate doesn't exists!");
                 return;

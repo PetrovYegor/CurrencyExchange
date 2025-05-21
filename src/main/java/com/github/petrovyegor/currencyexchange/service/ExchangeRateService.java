@@ -3,7 +3,7 @@ package com.github.petrovyegor.currencyexchange.service;
 import com.github.petrovyegor.currencyexchange.dao.CurrencyDao;
 import com.github.petrovyegor.currencyexchange.dao.ExchangeRateDao;
 import com.github.petrovyegor.currencyexchange.dto.CurrencyDTO;
-import com.github.petrovyegor.currencyexchange.dto.ExchangeRateResponseDTO;
+import com.github.petrovyegor.currencyexchange.dto.ExchangeRateDTO;
 import com.github.petrovyegor.currencyexchange.model.Currency;
 import com.github.petrovyegor.currencyexchange.model.ExchangeRate;
 
@@ -15,42 +15,42 @@ public class ExchangeRateService {
     private final ExchangeRateDao exchangeRateDao = new ExchangeRateDao();
     private final CurrencyDao currencyDao = new CurrencyDao();
 
-    public List<ExchangeRateResponseDTO> getAll() throws SQLException {
+    public List<ExchangeRateDTO> getAll() throws SQLException {
         List<ExchangeRate> source = exchangeRateDao.getAll();
-        List<ExchangeRateResponseDTO> result = new ArrayList<>();
+        List<ExchangeRateDTO> result = new ArrayList<>();
         for (ExchangeRate exchangeRate : source) {
             result.add(toDTO(exchangeRate));
         }
         return result;
     }
 
-    private ExchangeRateResponseDTO toDTO(ExchangeRate source) throws SQLException {
+    private ExchangeRateDTO toDTO(ExchangeRate source) throws SQLException {
         CurrencyDTO baseCurrency = toCurrencyDTO(currencyDao.getById(source.getBaseCurrencyId()));
         CurrencyDTO targetCurrency = toCurrencyDTO(currencyDao.getById(source.getTargetCurrencyId()));
-        return new ExchangeRateResponseDTO(source.getId(), baseCurrency, targetCurrency, source.getRate());
+        return new ExchangeRateDTO(source.getId(), baseCurrency, targetCurrency, source.getRate());
     }
 
-    public ExchangeRateResponseDTO getByCurrencies(Currency baseCurrency, Currency targetCurrency) throws SQLException {
+    public ExchangeRateDTO getByCurrencies(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency) throws SQLException {
         ExchangeRate result = exchangeRateDao.getByCurrenciesIds(baseCurrency.getId(), targetCurrency.getId());
         if (result != null) {
-            return new ExchangeRateResponseDTO(result.getId(), toCurrencyDTO(baseCurrency), toCurrencyDTO(targetCurrency), result.getRate());
+            return new ExchangeRateDTO(result.getId(), baseCurrency, targetCurrency, result.getRate());
         }
 
         return null;
     }
 
-    public ExchangeRateResponseDTO createExchangeRate(Currency baseCurrency, Currency targetCurrency, double rate) throws SQLException {
+    public ExchangeRateDTO createExchangeRate(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, double rate) throws SQLException {
         ExchangeRate result = exchangeRateDao.save(baseCurrency.getId(), targetCurrency.getId(), rate);
-        return new ExchangeRateResponseDTO(result.getId(), toCurrencyDTO(baseCurrency), toCurrencyDTO(targetCurrency), rate);
+        return new ExchangeRateDTO(result.getId(), baseCurrency, targetCurrency, rate);
     }
 
-    public Currency getCurrencyByCode(String code) throws SQLException, ClassNotFoundException {
-        return currencyDao.getByCode(code);
+    public CurrencyDTO getCurrencyByCode(String code) throws SQLException, ClassNotFoundException {
+        return toCurrencyDTO(currencyDao.getByCode(code));
     }
 
-    public ExchangeRateResponseDTO updateRate(double newRate, int exchangeRateId, Currency baseCurrency, Currency targetCurrency) throws SQLException {
+    public ExchangeRateDTO updateRate(double newRate, int exchangeRateId, CurrencyDTO baseCurrency, CurrencyDTO targetCurrency) throws SQLException {
         exchangeRateDao.updateRate(newRate, exchangeRateId);
-        return new ExchangeRateResponseDTO(exchangeRateId, toCurrencyDTO(baseCurrency), toCurrencyDTO(targetCurrency), newRate);
+        return new ExchangeRateDTO(exchangeRateId, baseCurrency, targetCurrency, newRate);
     }
 
     private CurrencyDTO toCurrencyDTO(Currency currency) {
