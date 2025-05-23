@@ -35,12 +35,12 @@ public class ConversionController extends HttpServlet {
             CurrencyDTO baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
             CurrencyDTO targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode);
             ExchangeRateDTO exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);
-            if (exchangeRate != null){
+            if (exchangeRate != null) {//если есть прямой курс
                 double amount = Double.parseDouble(amountString);
                 double convertedAmount = amount * exchangeRate.getRate();
 
                 //вынести в сервис заполнение дто?
-                ConversionDTO conversionDTO = new ConversionDTO(exchangeRate.getBaseCurrency(), exchangeRate.getTargetCurrency(), exchangeRate.getRate(), amount,convertedAmount);
+                ConversionDTO conversionDTO = new ConversionDTO(exchangeRate.getBaseCurrency(), exchangeRate.getTargetCurrency(), exchangeRate.getRate(), amount, convertedAmount);
                 response.setStatus(200);
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
@@ -49,39 +49,37 @@ public class ConversionController extends HttpServlet {
             if (exchangeRate == null) {
                 exchangeRate = exchangeRateService.getByCurrencies(targetCurrency, baseCurrency);
             }
-            if (exchangeRate != null){
+            if (exchangeRate != null) {//если есть обратный курс
                 double amount = Double.parseDouble(amountString);
                 double newRate = 1 / exchangeRate.getRate();
                 double convertedAmount = amount * newRate;
 
                 //вынести в сервис заполнение дто?
-                ConversionDTO conversionDTO = new ConversionDTO(exchangeRate.getBaseCurrency(), exchangeRate.getTargetCurrency(), newRate, amount,convertedAmount);
+                ConversionDTO conversionDTO = new ConversionDTO(exchangeRate.getBaseCurrency(), exchangeRate.getTargetCurrency(), newRate, amount, convertedAmount);
                 response.setStatus(200);
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 objectMapper.writeValue(response.getWriter(), conversionDTO);
             }
             CurrencyDTO usd = exchangeRateService.getCurrencyByCode("USD");
-            if (exchangeRate == null){
-                exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, usd);
+            if (exchangeRate == null) {
+                exchangeRate = exchangeRateService.getByCurrencies(usd, baseCurrency);
             }
-            if (exchangeRate != null){
+            if (exchangeRate != null) {//если есть кросс курс
                 double amount = Double.parseDouble(amountString);
-                double convertedToUsdAmount = amount * exchangeRate.getRate();
                 ExchangeRateDTO resultRate = exchangeRateService.getByCurrencies(usd, targetCurrency);
-                double convertedFromUsdAmount = convertedToUsdAmount * resultRate.getRate();
-                //вынести в сервис заполнение дто?
-                ConversionDTO conversionDTO = new ConversionDTO(exchangeRate.getBaseCurrency(), exchangeRate.getTargetCurrency(), newRate, amount,convertedFromUsdAmount);
-                response.setStatus(200);
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-                objectMapper.writeValue(response.getWriter(), conversionDTO);
+                if (resultRate != null) {//если вторая валюта тоже имеет обменный курс с долларом
+                    double newRate = 1 / exchangeRate.getRate() * resultRate.getRate();
+                    double convertedAmount = amount * newRate;
+                    //вынести в сервис заполнение дто?
+                    ConversionDTO conversionDTO = new ConversionDTO(baseCurrency, targetCurrency, newRate, amount, convertedAmount);
+                    response.setStatus(200);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    objectMapper.writeValue(response.getWriter(), conversionDTO);
+                }
+
             }
-
-
-//            else {
-//                //кинуть ошибку
-//            }
 
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
