@@ -2,8 +2,8 @@ package com.github.petrovyegor.currencyexchange.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.petrovyegor.currencyexchange.dto.CurrencyDTO;
-import com.github.petrovyegor.currencyexchange.model.Currency;
 import com.github.petrovyegor.currencyexchange.service.CurrencyService;
+import com.github.petrovyegor.currencyexchange.util.Validator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,18 +23,18 @@ public class CurrencyController extends HttpServlet {
         String name = request.getParameter("name");
         String sign = request.getParameter("sign");
 
-        if (code == null || name == null || sign == null){
+        if (code == null || name == null || sign == null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing required fields!");
             return;
         }
 
         try {
             CurrencyDTO currencyDTO = new CurrencyDTO(0, code.toUpperCase(), name, sign);
-            if (currencyService.getByCode(code.toUpperCase()) != null){
+            if (currencyService.getByCode(code.toUpperCase()) != null) {
                 response.sendError(409, "Currency already exists!");
                 return;
             }
-            CurrencyDTO currency = currencyService.createCurrency(currencyDTO);
+            CurrencyDTO currency = currencyService.createCurrency(currencyDTO);//нужна проверка на не null dto
             response.setStatus(201);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
@@ -79,7 +79,7 @@ public class CurrencyController extends HttpServlet {
         }
         try {
             CurrencyDTO currencyDTO = currencyService.getByCode(code);
-            if (currencyDTO == null){
+            if (Validator.isNull(currencyDTO)) {
                 response.sendError(404, "Currency doesn't exists!");
                 return;
             }

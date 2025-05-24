@@ -34,7 +34,7 @@ public class ConversionController extends HttpServlet {
         try {
             CurrencyDTO baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
             CurrencyDTO targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode);
-            ExchangeRateDTO exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);
+            ExchangeRateDTO exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);//должна быть проверка, что обменный курс не null
             if (exchangeRate != null) {//если есть прямой курс
                 double amount = Double.parseDouble(amountString);
                 double convertedAmount = amount * exchangeRate.getRate();
@@ -47,7 +47,7 @@ public class ConversionController extends HttpServlet {
                 objectMapper.writeValue(response.getWriter(), conversionDTO);
             }
             if (exchangeRate == null) {
-                exchangeRate = exchangeRateService.getByCurrencies(targetCurrency, baseCurrency);
+                exchangeRate = exchangeRateService.getByCurrencies(targetCurrency, baseCurrency);//должна быть проверка, что обменный курс не null
             }
             if (exchangeRate != null) {//если есть обратный курс
                 double amount = Double.parseDouble(amountString);
@@ -63,11 +63,11 @@ public class ConversionController extends HttpServlet {
             }
             CurrencyDTO usd = exchangeRateService.getCurrencyByCode("USD");
             if (exchangeRate == null) {
-                exchangeRate = exchangeRateService.getByCurrencies(usd, baseCurrency);
+                exchangeRate = exchangeRateService.getByCurrencies(usd, baseCurrency);//должна быть проверка, что обменный курс не null
             }
             if (exchangeRate != null) {//если есть кросс курс
                 double amount = Double.parseDouble(amountString);
-                ExchangeRateDTO resultRate = exchangeRateService.getByCurrencies(usd, targetCurrency);
+                ExchangeRateDTO resultRate = exchangeRateService.getByCurrencies(usd, targetCurrency);//должна быть проверка, что обменный курс не null
                 if (resultRate != null) {//если вторая валюта тоже имеет обменный курс с долларом
                     double newRate = 1 / exchangeRate.getRate() * resultRate.getRate();
                     double convertedAmount = amount * newRate;

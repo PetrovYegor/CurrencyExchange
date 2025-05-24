@@ -12,7 +12,7 @@ public class CurrencyService {
     private final CurrencyDao currencyDao = new CurrencyDao();
 
     public CurrencyDTO createCurrency(CurrencyDTO currencyDTO) throws SQLException {
-        Currency currency =  currencyDao.save(toCurrency(currencyDTO));
+        Currency currency = currencyDao.save(toCurrency(currencyDTO));
         return toCurrencyDTO(currency);
     }
 
@@ -30,17 +30,10 @@ public class CurrencyService {
     }
 
     private CurrencyDTO toCurrencyDTO(Currency currency) {
-        if (currency != null){
-            return new CurrencyDTO(currency.getId(), currency.getCode(), currency.getFullName(), currency.getSign());
-        }
-        return null;
+        return new CurrencyDTO(currency.getId(), currency.getCode(), currency.getFullName(), currency.getSign());
     }
 
-    private Currency toCurrency(CurrencyDTO source){
-        if (source != null){
-            return new Currency(source.getId(), source.getCode(), source.getFullName(), source.getSign());
-        }
-        return null;
+    private Currency toCurrency(CurrencyDTO source) {
+        return new Currency(source.getId(), source.getCode(), source.getFullName(), source.getSign());
     }
-
 }

@@ -68,7 +68,7 @@ public class ExchangeRateController extends HttpServlet {
                 return;
             }
 
-            ExchangeRateDTO exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);
+            ExchangeRateDTO exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);//должна быть проверка, что обменный курс не null
             if (exchangeRate == null) {
                 response.sendError(404, "Exchange rate doesn't exists!");
                 return;
@@ -106,7 +106,7 @@ public class ExchangeRateController extends HttpServlet {
                 return;
             }
 
-            if (exchangeRateService.getByCurrencies(baseCurrency, targetCurrency) != null) {
+            if (exchangeRateService.getByCurrencies(baseCurrency, targetCurrency) != null) {//должна быть проверка, что обменный курс не null
                 response.sendError(409, "Exchange rate already exists!");
                 return;
             }
@@ -157,7 +157,7 @@ public class ExchangeRateController extends HttpServlet {
                 return;
             }
 
-            ExchangeRateDTO exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);
+            ExchangeRateDTO exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);//должна быть проверка, что обменный курс не null
             if (exchangeRate == null) {
                 response.sendError(404, "Exchange rate doesn't exists!");
                 return;

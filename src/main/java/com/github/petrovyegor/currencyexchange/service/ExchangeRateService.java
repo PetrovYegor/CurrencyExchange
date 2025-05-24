@@ -32,11 +32,7 @@ public class ExchangeRateService {
 
     public ExchangeRateDTO getByCurrencies(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency) throws SQLException {
         ExchangeRate result = exchangeRateDao.getByCurrenciesIds(baseCurrency.getId(), targetCurrency.getId());
-        if (result != null) {
-            return new ExchangeRateDTO(result.getId(), baseCurrency, targetCurrency, result.getRate());
-        }
-
-        return null;
+        return new ExchangeRateDTO(result.getId(), baseCurrency, targetCurrency, result.getRate());
     }
 
     public ExchangeRateDTO createExchangeRate(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, double rate) throws SQLException {
@@ -54,9 +50,6 @@ public class ExchangeRateService {
     }
 
     private CurrencyDTO toCurrencyDTO(Currency currency) {
-        if (currency != null){
-            return new CurrencyDTO(currency.getId(), currency.getCode(), currency.getFullName(), currency.getSign());
-        }
-        return null;
+        return new CurrencyDTO(currency.getId(), currency.getCode(), currency.getFullName(), currency.getSign());
     }
 }
