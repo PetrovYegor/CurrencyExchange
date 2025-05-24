@@ -39,7 +39,6 @@ public class ExchangeRateDao {
             if (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 double rate = resultSet.getDouble("rate");
-                resultSet.close();//везде проверить, что закрываю
                 result = new ExchangeRate(id, baseCurrencyId, targetCurrencyId, rate);
             }
         } catch (ClassNotFoundException e) {
