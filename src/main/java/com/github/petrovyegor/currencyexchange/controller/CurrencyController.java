@@ -23,13 +23,12 @@ public class CurrencyController extends HttpServlet {
         String name = request.getParameter("name");
         String sign = request.getParameter("sign");
 
-        if (code == null || name == null || sign == null) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing required fields!");
-            return;
-        }
+        Validator.isNullOrEmptyParameters(code, name, sign);
+        Validator.validateCode(code);
+        Validator.validateName(name);
 
         try {
-            CurrencyDTO currencyDTO = new CurrencyDTO(0, code.toUpperCase(), name, sign);
+            CurrencyDTO currencyDTO = new CurrencyDTO(0, code.toUpperCase(), name, sign);//нужна проверка кода имени и символа
             if (currencyService.getByCode(code.toUpperCase()) != null) {
                 response.sendError(409, "Currency already exists!");
                 return;
@@ -73,10 +72,7 @@ public class CurrencyController extends HttpServlet {
             return;
         }
         String code = parts[1].toUpperCase();
-        if (!code.matches("[A-Z]{3}")) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid currency code");
-            return;
-        }
+        Validator.validateCode(code);
         try {
             CurrencyDTO currencyDTO = currencyService.getByCode(code);
             if (Validator.isNull(currencyDTO)) {

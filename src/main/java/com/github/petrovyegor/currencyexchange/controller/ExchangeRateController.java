@@ -57,7 +57,7 @@ public class ExchangeRateController extends HttpServlet {
             return;
         }
         try {
-            double rate = Double.parseDouble(body.split("=")[1]);
+            double rate = Double.parseDouble(body.split("=")[1]);//нужна проверка, что положительное число
             String baseCurrencyCode = pairOfCodes.substring(0, 3);
             String targetCurrencyCode = pairOfCodes.substring(3);
             CurrencyDTO baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
