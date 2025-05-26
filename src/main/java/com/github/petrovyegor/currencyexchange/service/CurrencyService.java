@@ -36,4 +36,8 @@ public class CurrencyService {
     private Currency toCurrency(CurrencyDTO source) {
         return new Currency(source.getId(), source.getCode(), source.getFullName(), source.getSign());
     }
+
+    public boolean isCurrencyExists(String code) throws SQLException, ClassNotFoundException {
+        return currencyDao.getByCode(code) != null;
+    }
 }

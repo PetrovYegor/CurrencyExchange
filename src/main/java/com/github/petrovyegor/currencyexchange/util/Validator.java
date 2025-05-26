@@ -3,6 +3,7 @@ package com.github.petrovyegor.currencyexchange.util;
 public final class Validator {
     private static final String CURRENCY_CODE_PATTERN = "[A-Z]{3}";
     private static final String CURRENCY_NAME_PATTERN = "[a-zA-Z]{1,50}";
+    private static final String CURRENCY_SIGN_PATTERN = ".{1,10}";
     private Validator(){}
 
     public static <T> boolean isNull(T source){
@@ -14,7 +15,7 @@ public final class Validator {
     }
 
     public static void main(String[] args) {
-        System.out.println("sdffsafDSAD".matches(CURRENCY_NAME_PATTERN));
+        System.out.println("1234567890d".matches(CURRENCY_SIGN_PATTERN));
     }
 
     private static boolean isNullOrEmpty(String source){
@@ -41,19 +42,22 @@ public final class Validator {
         }
     }
 
-//    private static boolean isUpperCase(String source){
-//        return source.matches();
-//    }
-
-//    public static void main(String[] args) {
-//        System.out.println(isUpperCase("AAAA"));
-//    }
-
-    public static boolean isLengthEqualsTo(String source, int length){
-        return source.length() == length;
+    private static boolean isSignValid(String sign){
+        return sign.matches(CURRENCY_SIGN_PATTERN);
     }
 
-    //порядок валидации - не нулл, заглавный, длина нужная
+    public static void validateSign(String sign){
+        if (!isSignValid(sign)){
+            throw new IllegalArgumentException("The currency symbol must not exceed 10 characters");
+        }
+    }
+    public static void validateCurrencyPostParameters(String code, String name, String sign){
+        Validator.isNullOrEmptyParameters(code, name, sign);
+        Validator.validateCode(code);
+        Validator.validateName(name);
+        Validator.validateSign(sign);
+    }
+
 
     public static void isNullOrEmptyParameters(String... parameters){
         if (parameters == null){
@@ -63,6 +67,16 @@ public final class Validator {
             if (isNullOrEmpty(parameters[i])){
                 throw new IllegalArgumentException("Parameter #" + (i + 1) + " is null or empty");//заменить на форматированный вывод
             }
+        }
+    }
+
+    private static boolean isPathValid(String path){
+        return !path.equals("/");
+    }
+
+    public static void validatePath(String path){
+        if(!isPathValid(path)){
+            throw new IllegalArgumentException("The path in the URL must not end with '/'");
         }
     }
 }
