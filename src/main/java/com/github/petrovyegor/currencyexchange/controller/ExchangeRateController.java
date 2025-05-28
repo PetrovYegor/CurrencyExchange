@@ -1,9 +1,10 @@
 package com.github.petrovyegor.currencyexchange.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.petrovyegor.currencyexchange.dto.CurrencyDTO;
-import com.github.petrovyegor.currencyexchange.dto.ExchangeRateDTO;
+import com.github.petrovyegor.currencyexchange.dto.CurrencyDto;
+import com.github.petrovyegor.currencyexchange.dto.ExchangeRateDto;
 import com.github.petrovyegor.currencyexchange.service.ExchangeRateService;
+import com.github.petrovyegor.currencyexchange.util.RequestParameterValidator;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,17 +59,18 @@ public class ExchangeRateController extends HttpServlet {
         }
         try {
             double rate = Double.parseDouble(body.split("=")[1]);//нужна проверка, что положительное число
+            RequestParameterValidator.validateRate(rate);
             String baseCurrencyCode = pairOfCodes.substring(0, 3);
             String targetCurrencyCode = pairOfCodes.substring(3);
-            CurrencyDTO baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
-            CurrencyDTO targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode);
+            CurrencyDto baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
+            CurrencyDto targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode);
 
             if (baseCurrency == null || targetCurrency == null) {
                 response.sendError(404, "Base or target, or both currency doesn't exists!");
                 return;
             }
 
-            ExchangeRateDTO exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);//должна быть проверка, что обменный курс не null
+            ExchangeRateDto exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);//должна быть проверка, что обменный курс не null
             if (exchangeRate == null) {
                 response.sendError(404, "Exchange rate doesn't exists!");
                 return;
@@ -89,18 +91,22 @@ public class ExchangeRateController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String baseCurrencyCode = request.getParameter("baseCurrencyCode");
-        String targetCurrencyCode = request.getParameter("targetCurrencyCode");
-        String rate = request.getParameter("rate");
+        String baseCurrencyCodeParameter = request.getParameter("baseCurrencyCode");
+        String targetCurrencyCodeParameter = request.getParameter("targetCurrencyCode");
+        String rateParameter = request.getParameter("rate");
 
-        if (baseCurrencyCode == null || targetCurrencyCode == null || rate == null) {
+        if (baseCurrencyCodeParameter == null || targetCurrencyCodeParameter == null || rateParameter == null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing required fields!");
             return;
         }
+        String baseCurrencyCode = baseCurrencyCodeParameter.toUpperCase();
+        String targetCurrencyCode = targetCurrencyCodeParameter.toUpperCase();
+        double rate = Double.parseDouble(rateParameter);
+        RequestParameterValidator.validateRate(rate);
 
         try {
-            CurrencyDTO baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode.toUpperCase());
-            CurrencyDTO targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode.toUpperCase());
+            CurrencyDto baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
+            CurrencyDto targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode);
             if (baseCurrency == null || targetCurrency == null) {
                 response.sendError(404, "Base or target, or both currency doesn't exists!");
                 return;
@@ -111,7 +117,7 @@ public class ExchangeRateController extends HttpServlet {
                 return;
             }
 
-            ExchangeRateDTO exchangeRate = exchangeRateService.createExchangeRate(baseCurrency, targetCurrency, Double.parseDouble(rate));
+            ExchangeRateDto exchangeRate = exchangeRateService.createExchangeRate(baseCurrency, targetCurrency, rate);
             response.setStatus(201);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
@@ -126,7 +132,7 @@ public class ExchangeRateController extends HttpServlet {
         String path = request.getPathInfo();
         if (path == null) {
             try {
-                List<ExchangeRateDTO> exchangeRates = exchangeRateService.getAll();
+                List<ExchangeRateDto> exchangeRates = exchangeRateService.getAll();
                 response.setStatus(200);
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
@@ -149,15 +155,15 @@ public class ExchangeRateController extends HttpServlet {
         try {
             String baseCurrencyCode = pairOfCodes.substring(0, 3);
             String targetCurrencyCode = pairOfCodes.substring(3);
-            CurrencyDTO baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
-            CurrencyDTO targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode);
+            CurrencyDto baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
+            CurrencyDto targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode);
 
             if (baseCurrency == null || targetCurrency == null) {
                 response.sendError(404, "Base or target, or both currency doesn't exists!");
                 return;
             }
 
-            ExchangeRateDTO exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);//должна быть проверка, что обменный курс не null
+            ExchangeRateDto exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);//должна быть проверка, что обменный курс не null
             if (exchangeRate == null) {
                 response.sendError(404, "Exchange rate doesn't exists!");
                 return;

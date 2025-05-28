@@ -1,5 +1,6 @@
 package com.github.petrovyegor.currencyexchange.dao;
 
+import com.github.petrovyegor.currencyexchange.exception.DBException;
 import com.github.petrovyegor.currencyexchange.model.Currency;
 import com.github.petrovyegor.currencyexchange.util.DatabaseManager;
 
@@ -7,14 +8,18 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CurrencyDao {
-    public Currency getByCode(String code) throws SQLException, ClassNotFoundException {
-        String query = "SELECT Id, Code, FullName, Sign FROM Currencies WHERE Code = ?";
-        ResultSet resultSet = null;
+public final class CurrencyDao {
+    private static final String GET_ALL_QUERY = """
+            SELECT Id, Code, FullName, Sign FROM Currencies WHERE Code = ?
+            """;
+
+    public Currency getByCode(String code) {
         try (Connection co = DatabaseManager.getConnection();
-             PreparedStatement statement = co.prepareStatement(query)) {
+             PreparedStatement statement = co.prepareStatement(GET_ALL_QUERY)
+        ) {
             statement.setString(1, code.toUpperCase());
-            resultSet = statement.executeQuery();
+            ResultSet resultSet = statement.executeQuery();
+
             if (resultSet.next()) {
                 return new Currency(
                         resultSet.getInt("id"),
@@ -25,10 +30,8 @@ public class CurrencyDao {
             } else {
                 return null;
             }
-        } finally {
-            if (resultSet != null) {
-                resultSet.close();
-            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException("Failed to execute the query, something went wrong");
         }
     }
 

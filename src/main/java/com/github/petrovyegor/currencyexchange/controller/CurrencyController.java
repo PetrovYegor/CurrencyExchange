@@ -1,9 +1,9 @@
 package com.github.petrovyegor.currencyexchange.controller;
 
-import com.github.petrovyegor.currencyexchange.dto.CurrencyDTO;
+import com.github.petrovyegor.currencyexchange.dto.CurrencyDto;
 import com.github.petrovyegor.currencyexchange.service.CurrencyService;
 import com.github.petrovyegor.currencyexchange.util.ResponsePreparer;
-import com.github.petrovyegor.currencyexchange.util.Validator;
+import com.github.petrovyegor.currencyexchange.util.RequestParameterValidator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,15 +23,15 @@ public class CurrencyController extends HttpServlet {
         String name = request.getParameter("name");
         String sign = request.getParameter("sign");
 
-        Validator.validateCurrencyPostParameters(code, name, sign);
+        RequestParameterValidator.validateCurrencyPostParameters(code, name, sign);
 
         try {
-            CurrencyDTO currencyDTO = new CurrencyDTO(0, code, name, sign);
+            CurrencyDto currencyDTO = new CurrencyDto(0, code, name, sign);
             if (currencyService.isCurrencyExists(code)) {
                 response.sendError(409, "Currency already exists!");
                 return;
             }
-            CurrencyDTO currency = currencyService.createCurrency(currencyDTO);//нужна проверка на не null dto
+            CurrencyDto currency = currencyService.createCurrency(currencyDTO);//нужна проверка на не null dto
             if (currency != null) {
                 responsePreparer.prepareResponse(response, 201);
                 responsePreparer.writeValue(response, currency);
@@ -50,7 +50,7 @@ public class CurrencyController extends HttpServlet {
         String path = request.getPathInfo();
         if (path == null) {
             try {
-                List<CurrencyDTO> currencies = currencyService.getAll();
+                List<CurrencyDto> currencies = currencyService.getAll();
                 responsePreparer.prepareResponse(response, 200);
                 responsePreparer.writeValue(response, currencies);
                 return;
@@ -62,12 +62,12 @@ public class CurrencyController extends HttpServlet {
             }
         }
         try {
-            Validator.validatePath(path);
+            RequestParameterValidator.validatePath(path);
             String[] parts = path.split("/");
             String code = parts[1].toUpperCase();
-            Validator.validateCode(code);
-            CurrencyDTO currencyDTO = currencyService.getByCode(code);
-            if (Validator.isNull(currencyDTO)) {
+            RequestParameterValidator.validateCode(code);
+            CurrencyDto currencyDTO = currencyService.getByCode(code);
+            if (RequestParameterValidator.isNull(currencyDTO)) {
                 response.sendError(404, "Currency doesn't exists!");
                 return;
             }

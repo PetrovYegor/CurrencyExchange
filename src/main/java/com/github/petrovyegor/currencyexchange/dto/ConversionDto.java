@@ -1,13 +1,13 @@
 package com.github.petrovyegor.currencyexchange.dto;
 
-public class ConversionDTO {
-    private CurrencyDTO baseCurrency;
-    private CurrencyDTO targetCurrency;
+public class ConversionDto {
+    private CurrencyDto baseCurrency;
+    private CurrencyDto targetCurrency;
     private double rate;
     private double amount;
     private double convertedAmount;
 
-    public ConversionDTO(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, double rate, double amount, double convertedAmount) {
+    public ConversionDto(CurrencyDto baseCurrency, CurrencyDto targetCurrency, double rate, double amount, double convertedAmount) {
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
         this.rate = rate;
@@ -15,11 +15,11 @@ public class ConversionDTO {
         this.convertedAmount = convertedAmount;
     }
 
-    public CurrencyDTO getBaseCurrency() {
+    public CurrencyDto getBaseCurrency() {
         return baseCurrency;
     }
 
-    public CurrencyDTO getTargetCurrency() {
+    public CurrencyDto getTargetCurrency() {
         return targetCurrency;
     }
 

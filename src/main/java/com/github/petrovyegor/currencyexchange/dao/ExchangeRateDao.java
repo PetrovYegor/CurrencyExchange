@@ -7,7 +7,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExchangeRateDao {
+public final class ExchangeRateDao {
+    public ExchangeRateDao() {
+    }
+
     public List<ExchangeRate> getAll() throws SQLException {
         List<ExchangeRate> result = new ArrayList<>();
         String query = "SELECT id, basecurrencyid, targetcurrencyid, rate FROM ExchangeRates";
@@ -70,7 +73,7 @@ public class ExchangeRateDao {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         } finally {
-            if (resultSet != null){
+            if (resultSet != null) {
                 resultSet.close();
             }
         }

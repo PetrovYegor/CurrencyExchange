@@ -1,10 +1,13 @@
 package com.github.petrovyegor.currencyexchange.util;
 
-public final class Validator {
+public final class RequestParameterValidator {
     private static final String CURRENCY_CODE_PATTERN = "[A-Z]{3}";
     private static final String CURRENCY_NAME_PATTERN = "[a-zA-Z]{1,50}";
     private static final String CURRENCY_SIGN_PATTERN = ".{1,10}";
-    private Validator(){}
+    private static final double RATE_MIN_VALUE = 1;
+    private static final double RATE_MAX_VALUE = 1000;
+
+    private RequestParameterValidator(){}
 
     public static <T> boolean isNull(T source){
         return source == null;
@@ -32,6 +35,16 @@ public final class Validator {
         }
     }
 
+    private static boolean isRateValid(double rate){
+        return rate >= RATE_MIN_VALUE && rate <= RATE_MAX_VALUE;
+    }
+
+    public static void validateRate(double rate){
+        if (isRateValid(rate)){
+            throw new IllegalArgumentException("The exchange rate value must be greater than or equal to 1 and less than or equal to 1000");
+        }
+    }
+
     private static boolean isNameValid(String name){
         return name.matches(CURRENCY_NAME_PATTERN);
     }
@@ -52,10 +65,10 @@ public final class Validator {
         }
     }
     public static void validateCurrencyPostParameters(String code, String name, String sign){
-        Validator.isNullOrEmptyParameters(code, name, sign);
-        Validator.validateCode(code);
-        Validator.validateName(name);
-        Validator.validateSign(sign);
+        RequestParameterValidator.isNullOrEmptyParameters(code, name, sign);
+        RequestParameterValidator.validateCode(code);
+        RequestParameterValidator.validateName(name);
+        RequestParameterValidator.validateSign(sign);
     }
 
 
@@ -73,6 +86,8 @@ public final class Validator {
     private static boolean isPathValid(String path){
         return !path.equals("/");
     }
+
+
 
     public static void validatePath(String path){
         if(!isPathValid(path)){

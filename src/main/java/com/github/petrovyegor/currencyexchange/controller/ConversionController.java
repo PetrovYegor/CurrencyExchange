@@ -1,9 +1,9 @@
 package com.github.petrovyegor.currencyexchange.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.petrovyegor.currencyexchange.dto.ConversionDTO;
-import com.github.petrovyegor.currencyexchange.dto.CurrencyDTO;
-import com.github.petrovyegor.currencyexchange.dto.ExchangeRateDTO;
+import com.github.petrovyegor.currencyexchange.dto.ConversionDto;
+import com.github.petrovyegor.currencyexchange.dto.CurrencyDto;
+import com.github.petrovyegor.currencyexchange.dto.ExchangeRateDto;
 import com.github.petrovyegor.currencyexchange.service.ExchangeRateService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,15 +32,15 @@ public class ConversionController extends HttpServlet {
             return;
         }
         try {
-            CurrencyDTO baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
-            CurrencyDTO targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode);
-            ExchangeRateDTO exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);//должна быть проверка, что обменный курс не null
+            CurrencyDto baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
+            CurrencyDto targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode);
+            ExchangeRateDto exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);//должна быть проверка, что обменный курс не null
             if (exchangeRate != null) {//если есть прямой курс
                 double amount = Double.parseDouble(amountString);
                 double convertedAmount = amount * exchangeRate.getRate();
 
                 //вынести в сервис заполнение дто?
-                ConversionDTO conversionDTO = new ConversionDTO(exchangeRate.getBaseCurrency(), exchangeRate.getTargetCurrency(), exchangeRate.getRate(), amount, convertedAmount);
+                ConversionDto conversionDTO = new ConversionDto(exchangeRate.getBaseCurrency(), exchangeRate.getTargetCurrency(), exchangeRate.getRate(), amount, convertedAmount);
                 response.setStatus(200);
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
@@ -55,24 +55,24 @@ public class ConversionController extends HttpServlet {
                 double convertedAmount = amount * newRate;
 
                 //вынести в сервис заполнение дто?
-                ConversionDTO conversionDTO = new ConversionDTO(exchangeRate.getBaseCurrency(), exchangeRate.getTargetCurrency(), newRate, amount, convertedAmount);
+                ConversionDto conversionDTO = new ConversionDto(exchangeRate.getBaseCurrency(), exchangeRate.getTargetCurrency(), newRate, amount, convertedAmount);
                 response.setStatus(200);
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 objectMapper.writeValue(response.getWriter(), conversionDTO);
             }
-            CurrencyDTO usd = exchangeRateService.getCurrencyByCode("USD");
+            CurrencyDto usd = exchangeRateService.getCurrencyByCode("USD");
             if (exchangeRate == null) {
                 exchangeRate = exchangeRateService.getByCurrencies(usd, baseCurrency);//должна быть проверка, что обменный курс не null
             }
             if (exchangeRate != null) {//если есть кросс курс
                 double amount = Double.parseDouble(amountString);
-                ExchangeRateDTO resultRate = exchangeRateService.getByCurrencies(usd, targetCurrency);//должна быть проверка, что обменный курс не null
+                ExchangeRateDto resultRate = exchangeRateService.getByCurrencies(usd, targetCurrency);//должна быть проверка, что обменный курс не null
                 if (resultRate != null) {//если вторая валюта тоже имеет обменный курс с долларом
                     double newRate = 1 / exchangeRate.getRate() * resultRate.getRate();
                     double convertedAmount = amount * newRate;
                     //вынести в сервис заполнение дто?
-                    ConversionDTO conversionDTO = new ConversionDTO(baseCurrency, targetCurrency, newRate, amount, convertedAmount);
+                    ConversionDto conversionDTO = new ConversionDto(baseCurrency, targetCurrency, newRate, amount, convertedAmount);
                     response.setStatus(200);
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");
