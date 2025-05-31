@@ -3,9 +3,21 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
+    <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>com.github.petrovyegor.currencyexchange.controller.filter.EncodingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
     <servlet>
         <servlet-name>CurrencyController</servlet-name>
         <servlet-class>com.github.petrovyegor.currencyexchange.controller.CurrencyController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CurrenciesController</servlet-name>
+        <servlet-class>com.github.petrovyegor.currencyexchange.controller.CurrenciesController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ExchangeRateController</servlet-name>
@@ -15,6 +27,10 @@
         <servlet-name>ConversionController</servlet-name>
         <servlet-class>com.github.petrovyegor.currencyexchange.controller.ConversionController</servlet-class>
     </servlet>
+    <servlet-mapping>
+        <servlet-name>CurrenciesController</servlet-name>
+        <url-pattern>/currencies</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CurrencyController</servlet-name>
         <url-pattern>/currencies/*</url-pattern>
