@@ -9,9 +9,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+
 public final class CurrencyDao {
+    private static final String QUERY_FAILURE_MESSAGE = "Failed to execute the query '%s', something went wrong";
     private static final String FIND_ALL_QUERY = "SELECT Id, Code, FullName, Sign FROM Currencies";
 
     //    public Currency getByCode(String code) {
@@ -50,12 +54,14 @@ public final class CurrencyDao {
             }
             return result;
         } catch (SQLException e) {
-            throw new DBException(FIND_ALL_QUERY);
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(FIND_ALL_QUERY));
         }
     }
 
 //    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-//        var result = new CurrencyDao().findAll();
+//        HashMap<String, String> test = new HashMap<>();
+//        test.put("message", "12123123");
+//        System.out.println(test);
 //        int a = 123;
 //    }
 //

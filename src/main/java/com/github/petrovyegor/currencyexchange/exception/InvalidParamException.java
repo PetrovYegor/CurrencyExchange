@@ -1,10 +1,10 @@
 package com.github.petrovyegor.currencyexchange.exception;
 
-public final class DBException extends RuntimeException {
+public class InvalidParamException extends RuntimeException{
     private int code;
     private String message;
 
-    public DBException(int code, String message){
+    public InvalidParamException(int code, String message){
         this.code = code;
         this.message = message;
     }
