@@ -4,42 +4,40 @@ import com.github.petrovyegor.currencyexchange.exception.DBException;
 import com.github.petrovyegor.currencyexchange.model.Currency;
 import com.github.petrovyegor.currencyexchange.util.DataSource;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 
 public final class CurrencyDao {
     private static final String QUERY_FAILURE_MESSAGE = "Failed to execute the query '%s', something went wrong";
     private static final String FIND_ALL_QUERY = "SELECT Id, Code, FullName, Sign FROM Currencies";
+    private static final String FIND_BY_CODE = "SELECT Id, Code, FullName, Sign FROM Currencies WHERE Code = ?";
 
-    //    public Currency getByCode(String code) {
-//        try (Connection co = DatabaseManager.getConnection();
-//             PreparedStatement statement = co.prepareStatement(GET_ALL_QUERY)
-//        ) {
-//            statement.setString(1, code.toUpperCase());
-//            ResultSet resultSet = statement.executeQuery();
-//
-//            if (resultSet.next()) {
-//                return new Currency(
-//                        resultSet.getInt("id"),
-//                        resultSet.getString("code"),
-//                        resultSet.getString("fullname"),
-//                        resultSet.getString("sign")
-//                );
-//            } else {
-//                return null;
-//            }
-//        } catch (SQLException | ClassNotFoundException e) {
-//            throw new DBException("Failed to execute the query, something went wrong");
-//        }
-//    }
-//
+    public Optional<Currency> findByCode(String code) {
+        try (Connection co = DataSource.getConnection();
+             PreparedStatement statement = co.prepareStatement(FIND_BY_CODE)) {
+            statement.setString(1, code);
+            ResultSet resultSet = statement.executeQuery();
+
+            Currency currency = null;
+
+            if (resultSet.next()) {
+                currency = new Currency(
+                        resultSet.getInt("id"),
+                        resultSet.getString("code"),
+                        resultSet.getString("fullname"),
+                        resultSet.getString("sign")
+                );
+            }
+            return Optional.ofNullable(currency);
+        } catch (SQLException e) {
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(FIND_BY_CODE));
+        }
+    }
+
     public List<Currency> findAll() {
         List<Currency> result = new ArrayList<>();
         try (Connection co = DataSource.getConnection();

@@ -1,12 +1,9 @@
 package com.github.petrovyegor.currencyexchange.controller;
 
-import com.github.petrovyegor.currencyexchange.dto.CurrencyDto;
-import com.github.petrovyegor.currencyexchange.util.RequestParameterValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class CurrenciesController extends BaseController {
 

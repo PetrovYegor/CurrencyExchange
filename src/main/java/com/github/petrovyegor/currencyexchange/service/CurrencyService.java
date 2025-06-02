@@ -2,7 +2,9 @@ package com.github.petrovyegor.currencyexchange.service;
 
 import com.github.petrovyegor.currencyexchange.dao.CurrencyDao;
 import com.github.petrovyegor.currencyexchange.dto.CurrencyDto;
+import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 import com.github.petrovyegor.currencyexchange.model.Currency;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,12 +12,12 @@ import java.util.List;
 public class CurrencyService {
     private final CurrencyDao currencyDao = new CurrencyDao();
 
-//    public CurrencyDto createCurrency(CurrencyDto currencyDTO) throws SQLException {
+    //    public CurrencyDto createCurrency(CurrencyDto currencyDTO) throws SQLException {
 //        Currency currency = currencyDao.save(toCurrency(currencyDTO));
 //        return toCurrencyDTO(currency);
 //    }
 //
-    public List<CurrencyDto> findAll(){
+    public List<CurrencyDto> findAll() {
         List<CurrencyDto> result = new ArrayList<>();
         List<Currency> currencies = currencyDao.findAll();
         for (Currency currency : currencies) {
@@ -23,11 +25,13 @@ public class CurrencyService {
         }
         return result;
     }
-//
-//    public CurrencyDto getByCode(String code) throws SQLException, ClassNotFoundException {
-//        return toCurrencyDTO(currencyDao.getByCode(code));
-//    }
-//
+
+    public CurrencyDto findByCode(String code) {
+        Currency currency = currencyDao.findByCode(code.toUpperCase())
+                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no currency with this code"));
+        return toDTO(currency);
+    }
+
     private CurrencyDto toDTO(Currency currency) {
         return new CurrencyDto(currency.getId(), currency.getCode(), currency.getFullName(), currency.getSign());
     }
