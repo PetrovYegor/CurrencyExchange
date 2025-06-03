@@ -1,12 +1,12 @@
 package com.github.petrovyegor.currencyexchange.dto;
 
-public class CurrencyDto {
+public class CurrencyResponseDto {
     private int id;
     private String code;
     private String fullName;
     private String sign;
 
-    public CurrencyDto(int id, String code, String fullName, String sign){
+    public CurrencyResponseDto(int id, String code, String fullName, String sign){
         this.id = id;
         this.code = code;
         this.fullName = fullName;
