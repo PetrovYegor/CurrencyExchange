@@ -1,9 +1,10 @@
 package com.github.petrovyegor.currencyexchange.controller;
 
-import com.github.petrovyegor.currencyexchange.dto.CurrencyResponseDto;
 import com.github.petrovyegor.currencyexchange.dto.CurrencyRequestDto;
+import com.github.petrovyegor.currencyexchange.dto.CurrencyResponseDto;
 import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
 import com.github.petrovyegor.currencyexchange.exception.InvalidRequestException;
+import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -12,8 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.github.petrovyegor.currencyexchange.util.RequestParametersValidator.isCurrencyGetParametersValid;
-import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static jakarta.servlet.http.HttpServletResponse.SC_CONFLICT;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
 public class CurrenciesController extends BaseController {
 
@@ -37,11 +37,11 @@ public class CurrenciesController extends BaseController {
         }
 
         if (currencyService.isCurrencyExists(code)) {
-            response.sendError(SC_CONFLICT, "Currency already exists!");
-            return;
+            throw new RestErrorException(SC_CONFLICT, "Currency already exists!");
         }
         CurrencyRequestDto currencyRequestDto = new CurrencyRequestDto(code, name, sign);
         CurrencyResponseDto createdCurrency = currencyService.createCurrency(currencyRequestDto);
+        response.setStatus(SC_CREATED);
         objectMapper.writeValue(response.getWriter(), createdCurrency);
     }
 

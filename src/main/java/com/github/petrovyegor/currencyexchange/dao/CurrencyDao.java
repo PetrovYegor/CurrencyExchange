@@ -15,7 +15,9 @@ public final class CurrencyDao {
     private static final String QUERY_FAILURE_MESSAGE = "Failed to execute the query '%s', something went wrong";
     private static final String FIND_ALL_QUERY = "SELECT Id, Code, FullName, Sign FROM Currencies";
     private static final String FIND_BY_CODE = "SELECT Id, Code, FullName, Sign FROM Currencies WHERE Code = ?";
+    private static final String FIND_BY_ID = "SELECT Id, Code, FullName, Sign FROM Currencies WHERE id = ?";
     private static final String INSERT_CURRENCY = "INSERT INTO Currencies (Code, FullName, Sign) VALUES (?, ?, ?)";
+
 
     public Optional<Currency> findByCode(String code) {
         try (Connection co = DataSource.getConnection();
@@ -57,13 +59,6 @@ public final class CurrencyDao {
         }
     }
 
-    //    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-//        HashMap<String, String> test = new HashMap<>();
-//        test.put("message", "12123123");
-//        System.out.println(test);
-//        int a = 123;
-//    }
-//
     public Currency save(Currency currency) {
         try (Connection co = DataSource.getConnection();
              PreparedStatement statement = co.prepareStatement(INSERT_CURRENCY)) {
@@ -73,38 +68,33 @@ public final class CurrencyDao {
             statement.executeUpdate();
             ResultSet resultSet = statement.getGeneratedKeys();
 
-            //currency.setId(resultSet.getInt("id"));
             currency.setId(resultSet.getInt(1));
             return currency;
-
         } catch (SQLException e) {
             throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(FIND_ALL_QUERY));
         }
-//
-//    public Currency getById(int id) throws SQLException {
-//        Currency result = null;
-//        ResultSet resultSet = null;
-//        String query = "SELECT Id, Code, FullName, Sign FROM Currencies WHERE id = ?";
-//        try (Connection co = DatabaseManager.getConnection();
-//             PreparedStatement statement = co.prepareStatement(query)) {
-//            statement.setInt(1, id);
-//            resultSet = statement.executeQuery();
-//            if (resultSet.next()) {
-//                String code = resultSet.getString("code");
-//                String name = resultSet.getString("fullname");
-//                String sign = resultSet.getString("sign");
-//                result = new Currency(id, code, name, sign);
-//            }
-//        } catch (ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        } finally {
-//            resultSet.close();
-//            if (result != null) {
-//                return result;
-//            } else {
-//                throw new RuntimeException();
-//            }
-//        }
-//    }
+    }
+
+    public Optional<Currency> findById(int id) {
+        try (Connection co = DataSource.getConnection();
+             PreparedStatement statement = co.prepareStatement(FIND_BY_ID)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            Currency currency = null;
+
+            if (resultSet.next()) {
+                currency = new Currency(
+                        resultSet.getInt("id"),
+                        resultSet.getString("code"),
+                        resultSet.getString("fullname"),
+                        resultSet.getString("sign")
+                );
+            }
+            return Optional.ofNullable(currency);
+        } catch (SQLException e) {
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(FIND_BY_ID));
+        }
     }
 }
+
