@@ -1,25 +1,17 @@
-//package com.github.petrovyegor.currencyexchange.controller;
-//
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.github.petrovyegor.currencyexchange.dto.CurrencyDto;
-//import com.github.petrovyegor.currencyexchange.dto.ExchangeRateDto;
-//import com.github.petrovyegor.currencyexchange.service.ExchangeRateService;
-//import com.github.petrovyegor.currencyexchange.util.RequestParameterValidator;
-//import jakarta.servlet.annotation.WebServlet;
-//import jakarta.servlet.http.HttpServlet;
-//import jakarta.servlet.http.HttpServletRequest;
-//import jakarta.servlet.http.HttpServletResponse;
-//
-//import java.io.IOException;
-//import java.sql.SQLException;
-//import java.util.List;
-//import java.util.stream.Collectors;
-//
-//@WebServlet("/exchangeRates")
-//public class ExchangeRateController extends HttpServlet {
-//    private final ExchangeRateService exchangeRateService = new ExchangeRateService();
-//    private final ObjectMapper objectMapper = new ObjectMapper();
-//
+package com.github.petrovyegor.currencyexchange.controller;
+
+import com.github.petrovyegor.currencyexchange.dto.ExchangeRateResponseDto;
+import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+
+import static com.github.petrovyegor.currencyexchange.util.RequestParametersValidator.isPairOfCodesValid;
+import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+
+public class ExchangeRateController extends BaseController {
+
 //    @Override
 //    protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
 //        String method = request.getMethod();
@@ -31,12 +23,12 @@
 //            this.doPatch(request, response);
 //        }
 //    }
-//
+
 //    protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
 //        String body = request.getReader().lines().collect(Collectors.joining());
 //
 //        String path = request.getPathInfo();
-//        if (path == null){
+//        if (path == null) {
 //            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing required fields!");
 //            return;
 //        }
@@ -70,7 +62,7 @@
 //                return;
 //            }
 //
-//            ExchangeRateDto exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);//должна быть проверка, что обменный курс не null
+//            ExchangeRateResponseDto exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);//должна быть проверка, что обменный курс не null
 //            if (exchangeRate == null) {
 //                response.sendError(404, "Exchange rate doesn't exists!");
 //                return;
@@ -88,7 +80,7 @@
 //            throw new RuntimeException(e);
 //        }
 //    }
-//
+
 //    @Override
 //    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 //        String baseCurrencyCodeParameter = request.getParameter("baseCurrencyCode");
@@ -117,7 +109,7 @@
 //                return;
 //            }
 //
-//            ExchangeRateDto exchangeRate = exchangeRateService.createExchangeRate(baseCurrency, targetCurrency, rate);
+//            ExchangeRateResponseDto exchangeRate = exchangeRateService.createExchangeRate(baseCurrency, targetCurrency, rate);
 //            response.setStatus(201);
 //            response.setContentType("application/json");
 //            response.setCharacterEncoding("UTF-8");
@@ -127,12 +119,12 @@
 //            response.getWriter().write("{\"error\":\"Database error: " + e.getMessage() + "\"}");
 //        }
 //    }
-//
+
 //    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 //        String path = request.getPathInfo();
 //        if (path == null) {
 //            try {
-//                List<ExchangeRateDto> exchangeRates = exchangeRateService.getAll();
+//                List<ExchangeRateResponseDto> exchangeRates = exchangeRateService.getAll();
 //                response.setStatus(200);
 //                response.setContentType("application/json");
 //                response.setCharacterEncoding("UTF-8");
@@ -163,7 +155,7 @@
 //                return;
 //            }
 //
-//            ExchangeRateDto exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);//должна быть проверка, что обменный курс не null
+//            ExchangeRateResponseDto exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);//должна быть проверка, что обменный курс не null
 //            if (exchangeRate == null) {
 //                response.sendError(404, "Exchange rate doesn't exists!");
 //                return;
@@ -179,5 +171,15 @@
 //        } catch (ClassNotFoundException e) {
 //            throw new RuntimeException(e);
 //        }
-//    }
-//}
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String pair = request.getPathInfo().replaceFirst("/", "").toUpperCase();
+        if (!isPairOfCodesValid(pair)) {
+            throw new InvalidParamException(SC_BAD_REQUEST, "Pair of currency codes parameter is not valid");
+        }
+        ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.findByPairOfCodes(pair);
+        objectMapper.writeValue(response.getWriter(), exchangeRateResponseDto);
+    }
+}
+

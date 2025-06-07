@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CurrencyService {
     private final CurrencyDao currencyDao = new CurrencyDao();
@@ -33,7 +34,7 @@ public class CurrencyService {
         return toDTO(currency);
     }
 
-    private CurrencyResponseDto toDTO(Currency currency) {
+    public CurrencyResponseDto toDTO(Currency currency) {
         return new CurrencyResponseDto(currency.getId(), currency.getCode(), currency.getFullName(), currency.getSign());
     }
 
@@ -44,5 +45,11 @@ public class CurrencyService {
 
     public boolean isCurrencyExists(String code) {
         return currencyDao.findByCode(code).isPresent();
+    }
+
+    public CurrencyResponseDto findById(int id) {
+        Currency currency = currencyDao.findById(id)
+                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no currency with this id"));
+        return toDTO(currency);
     }
 }

@@ -5,6 +5,7 @@ import com.github.petrovyegor.currencyexchange.exception.DBException;
 import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 import com.github.petrovyegor.currencyexchange.service.CurrencyService;
+import com.github.petrovyegor.currencyexchange.service.ExchangeRateService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,6 +15,7 @@ import java.io.IOException;
 public abstract class BaseController extends HttpServlet {
     public final ObjectMapper objectMapper = new ObjectMapper();
     public final CurrencyService currencyService = new CurrencyService();
+    public final ExchangeRateService exchangeRateService = new ExchangeRateService();
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) {

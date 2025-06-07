@@ -17,6 +17,18 @@ public class ExchangeRate {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getBaseCurrencyId() {
+        return baseCurrencyId;
+    }
+
+    public void setBaseCurrencyId(int baseCurrencyId) {
+        this.baseCurrencyId = baseCurrencyId;
+    }
+
     public int getTargetCurrencyId() {
         return targetCurrencyId;
     }

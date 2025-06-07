@@ -1,13 +1,13 @@
 package com.github.petrovyegor.currencyexchange.dto;
 
-public class ExchangeRateDto {
+public class ExchangeRateResponseDto {
 
     private int id;
     private CurrencyResponseDto baseCurrency;
     private CurrencyResponseDto targetCurrency;
     private double rate;
 
-    public ExchangeRateDto(int id, CurrencyResponseDto baseCurrency, CurrencyResponseDto targetCurrency, double rate) {
+    public ExchangeRateResponseDto(int id, CurrencyResponseDto baseCurrency, CurrencyResponseDto targetCurrency, double rate) {
         this.id = id;
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;

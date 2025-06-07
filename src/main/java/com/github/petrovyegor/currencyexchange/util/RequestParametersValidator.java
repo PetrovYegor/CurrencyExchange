@@ -2,11 +2,16 @@ package com.github.petrovyegor.currencyexchange.util;
 
 public class RequestParametersValidator {
     private static final String CURRENCY_CODE_PATTERN = "[a-zA-Z]{3}";
+    private static final String PAIR_CURRENCY_CODES_PATTERN = "[a-zA-Z]{6}";
     private static final String CURRENCY_NAME_PATTERN = "[a-zA-Z]{1,50}";
     private static final String CURRENCY_SIGN_PATTERN = "[a-zA-Z]{1,10}";
 
     public static boolean isCodeValid(String code) {
         return code.matches(CURRENCY_CODE_PATTERN);
+    }
+
+    public static boolean isPairOfCodesValid(String pair) {
+        return pair.matches(PAIR_CURRENCY_CODES_PATTERN);
     }
 
     public static boolean isNameValid(String name){
