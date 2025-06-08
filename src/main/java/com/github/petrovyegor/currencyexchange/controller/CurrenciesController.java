@@ -25,7 +25,7 @@ public class CurrenciesController extends BaseController {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        if (!isRequestValid(request)) {
+        if (!isCurrencyRequestValid(request)) {
             throw new InvalidRequestException(SC_BAD_REQUEST, "One or more http request parameters are missing");
         }
         String code = request.getParameter("code").toUpperCase();
@@ -45,7 +45,7 @@ public class CurrenciesController extends BaseController {
         objectMapper.writeValue(response.getWriter(), createdCurrency);
     }
 
-    private boolean isRequestValid(HttpServletRequest request) {
+    private boolean isCurrencyRequestValid(HttpServletRequest request) {
         Map<String, String[]> parameters = request.getParameterMap();
         Set<String> requiredParameters = Set.of("code", "name", "sign");
         return parameters.keySet().containsAll(requiredParameters);

@@ -81,44 +81,7 @@ public class ExchangeRateController extends BaseController {
 //        }
 //    }
 
-//    @Override
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//        String baseCurrencyCodeParameter = request.getParameter("baseCurrencyCode");
-//        String targetCurrencyCodeParameter = request.getParameter("targetCurrencyCode");
-//        String rateParameter = request.getParameter("rate");
-//
-//        if (baseCurrencyCodeParameter == null || targetCurrencyCodeParameter == null || rateParameter == null) {
-//            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing required fields!");
-//            return;
-//        }
-//        String baseCurrencyCode = baseCurrencyCodeParameter.toUpperCase();
-//        String targetCurrencyCode = targetCurrencyCodeParameter.toUpperCase();
-//        double rate = Double.parseDouble(rateParameter);
-//        RequestParameterValidator.validateRate(rate);
-//
-//        try {
-//            CurrencyDto baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
-//            CurrencyDto targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode);
-//            if (baseCurrency == null || targetCurrency == null) {
-//                response.sendError(404, "Base or target, or both currency doesn't exists!");
-//                return;
-//            }
-//
-//            if (exchangeRateService.getByCurrencies(baseCurrency, targetCurrency) != null) {//должна быть проверка, что обменный курс не null
-//                response.sendError(409, "Exchange rate already exists!");
-//                return;
-//            }
-//
-//            ExchangeRateResponseDto exchangeRate = exchangeRateService.createExchangeRate(baseCurrency, targetCurrency, rate);
-//            response.setStatus(201);
-//            response.setContentType("application/json");
-//            response.setCharacterEncoding("UTF-8");
-//            objectMapper.writeValue(response.getWriter(), exchangeRate);
-//        } catch (SQLException | ClassNotFoundException e) {
-//            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//            response.getWriter().write("{\"error\":\"Database error: " + e.getMessage() + "\"}");
-//        }
-//    }
+
 
 //    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 //        String path = request.getPathInfo();
@@ -178,7 +141,7 @@ public class ExchangeRateController extends BaseController {
         if (!isPairOfCodesValid(pair)) {
             throw new InvalidParamException(SC_BAD_REQUEST, "Pair of currency codes parameter is not valid");
         }
-        ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.findByPairOfCodes(pair);
+        ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.findByCurrencyCodes(pair);
         objectMapper.writeValue(response.getWriter(), exchangeRateResponseDto);
     }
 }

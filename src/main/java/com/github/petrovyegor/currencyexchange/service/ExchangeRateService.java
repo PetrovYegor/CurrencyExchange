@@ -2,6 +2,7 @@ package com.github.petrovyegor.currencyexchange.service;
 
 import com.github.petrovyegor.currencyexchange.dao.ExchangeRateDao;
 import com.github.petrovyegor.currencyexchange.dto.CurrencyResponseDto;
+import com.github.petrovyegor.currencyexchange.dto.ExchangeRateRequestDto;
 import com.github.petrovyegor.currencyexchange.dto.ExchangeRateResponseDto;
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 import com.github.petrovyegor.currencyexchange.model.ExchangeRate;
@@ -29,37 +30,34 @@ public class ExchangeRateService {
         return new ExchangeRateResponseDto(exchangeRate.getId(), baseCurrency, targetCurrency, exchangeRate.getRate());
     }
 
-    public ExchangeRateResponseDto findByPairOfCodes(String pair) {
+    public ExchangeRateResponseDto findByCurrencyCodes(String pair) {
         String baseCurrencyCode = pair.substring(0, 3);
         String targetCurrencyCode = pair.substring(3);
-        CurrencyResponseDto baseCurrency = currencyService.findByCode(baseCurrencyCode);
-        CurrencyResponseDto targetCurrency = currencyService.findByCode(targetCurrencyCode);
-        ExchangeRate exchangeRate = exchangeRateDao.findByCurrencyIds(baseCurrency.getId(), targetCurrency.getId())
+        ExchangeRate exchangeRate = exchangeRateDao.findByCurrencyCodes(baseCurrencyCode, targetCurrencyCode)
                 .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no exchange rate with this pair of currency codes"));
         return toDto(exchangeRate);
     }
+
+    public boolean isExchangeRateExists(String baseCode, String targetCode) {
+        return exchangeRateDao.findByCurrencyCodes(baseCode, targetCode).isPresent();
+    }
+
+    public ExchangeRateResponseDto createExchangeRate(ExchangeRateRequestDto exchangeRateRequestDto) {
+        ExchangeRate exchangeRate = exchangeRateDao.save(toExchangeRate(exchangeRateRequestDto));
+        return toDto(exchangeRate);
+    }
+
+    private ExchangeRate toExchangeRate(ExchangeRateRequestDto source) {
+        int baseCurrencyId = currencyService.findByCode(source.getBaseCurrencyCode()).getId();
+        int targetCurrencyId = currencyService.findByCode(source.getTargetCurrencyCode()).getId();
+        double rate = source.getRate();
+        return new ExchangeRate(baseCurrencyId, targetCurrencyId, rate);
+    }
 }
-//
-//    public ExchangeRateResponseDto createExchangeRate(CurrencyDto baseCurrency, CurrencyDto targetCurrency, double rate) throws SQLException {
-//        ExchangeRate result = exchangeRateDao.save(baseCurrency.getId(), targetCurrency.getId(), rate);
-//        return new ExchangeRateResponseDto(result.getId(), baseCurrency, targetCurrency, rate);
-//    }
-//
-//    public CurrencyDto getCurrencyByCode(String code) throws SQLException, ClassNotFoundException {
-//        return toCurrencyDTO(currencyDao.getByCode(code));
-//    }
-//
+
 //    public ExchangeRateResponseDto updateRate(double newRate, int exchangeRateId, CurrencyDto baseCurrency, CurrencyDto targetCurrency) throws SQLException {
 //        exchangeRateDao.updateRate(newRate, exchangeRateId);
 //        return new ExchangeRateResponseDto(exchangeRateId, baseCurrency, targetCurrency, newRate);
 //    }
-//
-//
-//    private ExchangeRateResponseDto toDTO(ExchangeRate exchangeRate) {
-//
-//        CurrencyResponseDto baseCurrency = currencyDao.
-//        CurrencyResponseDto targetCurrency = toCurrencyDTO(currencyDao.getById(exchangeRate.getTargetCurrencyId()));
-//        return new ExchangeRateResponseDto(source.getId(), baseCurrency, targetCurrency, source.getRate());
-//        return new ExchangeRateResponseDto(exchangeRate.getId(), exchangeRate.getCode(), exchangeRate.getFullName(), exchangeRate.getSign());
-//    }
+
 
