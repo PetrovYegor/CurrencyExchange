@@ -20,7 +20,7 @@ public final class ExchangeRateDao {
             FROM ExchangeRates er
             JOIN Currencies base_cur ON er.BaseCurrencyId = base_cur.Id
             JOIN Currencies target_cur ON er.TargetCurrencyId = target_cur."Id"
-            WHERE base_cur.Code = 'RUB' AND target_cur.Code = 'CNY'
+            WHERE base_cur.Code = ? AND target_cur.Code = ?
             """;
     private static final String INSERT_EXCHANGE_RATE = "INSERT INTO ExchangeRates (BaseCurrencyId, TargetCurrencyId, Rate) VALUES (?, ?, ?)";
 

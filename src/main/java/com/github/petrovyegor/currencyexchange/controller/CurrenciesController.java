@@ -23,8 +23,7 @@ public class CurrenciesController extends BaseController {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (!isCurrencyRequestValid(request)) {
             throw new InvalidRequestException(SC_BAD_REQUEST, "One or more http request parameters are missing");
         }

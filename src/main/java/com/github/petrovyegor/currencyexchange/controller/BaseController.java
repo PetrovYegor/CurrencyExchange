@@ -3,6 +3,7 @@ package com.github.petrovyegor.currencyexchange.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.petrovyegor.currencyexchange.exception.DBException;
 import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
+import com.github.petrovyegor.currencyexchange.exception.InvalidRequestException;
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 import com.github.petrovyegor.currencyexchange.service.CurrencyService;
 import com.github.petrovyegor.currencyexchange.service.ExchangeRateService;
@@ -28,6 +29,8 @@ public abstract class BaseController extends HttpServlet {
             }
         } catch (InvalidParamException e) {
             sendError(e.getCode(), e.getMessage(), response);
+        } catch (InvalidRequestException e) {
+            sendError(e.getCode(), e.getMessage(), response);
         } catch (RestErrorException e) {
             sendError(e.getCode(), e.getMessage(), response);
         } catch (DBException e) {
@@ -37,7 +40,7 @@ public abstract class BaseController extends HttpServlet {
         }
     }
 
-    protected void doPatch(HttpServletRequest req, HttpServletResponse resp) {
+    protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws IOException{
 
     }
 

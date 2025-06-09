@@ -24,7 +24,7 @@ public class ExchangeRatesController extends BaseController {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (!isExchangeRateRequestValid(request)) {
+        if (!isExchangeRatePostRequestValid(request)) {
             throw new InvalidRequestException(SC_BAD_REQUEST, "One or more http request parameters are missing");
         }
         String baseCode = request.getParameter("baseCurrencyCode").toUpperCase();
@@ -54,7 +54,7 @@ public class ExchangeRatesController extends BaseController {
         objectMapper.writeValue(response.getWriter(), createdExchangeRate);
     }
 
-    private boolean isExchangeRateRequestValid(HttpServletRequest request) {
+    private boolean isExchangeRatePostRequestValid(HttpServletRequest request) {
         Map<String, String[]> parameters = request.getParameterMap();
         Set<String> requiredParameters = Set.of("baseCurrencyCode", "targetCurrencyCode", "rate");
         return parameters.keySet().containsAll(requiredParameters);
