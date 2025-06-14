@@ -47,17 +47,22 @@ public class ExchangeRateService {
         return toDto(exchangeRate);
     }
 
+    public ExchangeRateResponseDto updateRate(ExchangeRateRequestDto exchangeRateRequestDto) {
+        return toDto(exchangeRateDao.updateRate(toExchangeRate(exchangeRateRequestDto)));
+    }
+
     private ExchangeRate toExchangeRate(ExchangeRateRequestDto source) {
+        int id = source.getId();
         int baseCurrencyId = currencyService.findByCode(source.getBaseCurrencyCode()).getId();
         int targetCurrencyId = currencyService.findByCode(source.getTargetCurrencyCode()).getId();
         double rate = source.getRate();
-        return new ExchangeRate(baseCurrencyId, targetCurrencyId, rate);
+        if (source.getId() == 0) {
+            return new ExchangeRate(baseCurrencyId, targetCurrencyId, rate);
+        }
+        return new ExchangeRate(id, baseCurrencyId, targetCurrencyId, rate);
     }
 }
 
-//    public ExchangeRateResponseDto updateRate(double newRate, int exchangeRateId, CurrencyDto baseCurrency, CurrencyDto targetCurrency) throws SQLException {
-//        exchangeRateDao.updateRate(newRate, exchangeRateId);
-//        return new ExchangeRateResponseDto(exchangeRateId, baseCurrency, targetCurrency, newRate);
-//    }
+
 
 

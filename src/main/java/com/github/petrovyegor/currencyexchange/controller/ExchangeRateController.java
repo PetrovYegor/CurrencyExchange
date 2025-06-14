@@ -1,56 +1,71 @@
 package com.github.petrovyegor.currencyexchange.controller;
 
+import com.github.petrovyegor.currencyexchange.dto.ExchangeRateRequestDto;
 import com.github.petrovyegor.currencyexchange.dto.ExchangeRateResponseDto;
 import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
 import com.github.petrovyegor.currencyexchange.exception.InvalidRequestException;
+import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.stream.Collectors;
 
 import static com.github.petrovyegor.currencyexchange.util.RequestParametersValidator.isPairOfCodesValid;
+import static com.github.petrovyegor.currencyexchange.util.RequestParametersValidator.isRateValid;
 import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 public class ExchangeRateController extends BaseController {
+
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String method = request.getMethod();
+        if (method.equals("GET")) {
+            this.doGet(request, response);
+        } else if (method.equals("PATCH")) {
+            this.doPatch(request, response);
+        }
+    }
+
     protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String body = request.getReader().lines().collect(Collectors.joining());
-        if (!isExchangeRatePatchRequestValid(request)) {
-            throw new InvalidRequestException(SC_BAD_REQUEST, "One or more http request parameters are missing");
+        String pair = request.getPathInfo().replaceFirst("/", "").toUpperCase();
+        if (!isPairOfCodesValid(pair)) {
+            throw new InvalidParamException(SC_BAD_REQUEST, "Pair of currency codes parameter is not valid");
         }
 
-//        try {
-//            double rate = Double.parseDouble(body.split("=")[1]);//нужна проверка, что положительное число
-//            RequestParameterValidator.validateRate(rate);
-//            String baseCurrencyCode = pairOfCodes.substring(0, 3);
-//            String targetCurrencyCode = pairOfCodes.substring(3);
-//            CurrencyDto baseCurrency = exchangeRateService.getCurrencyByCode(baseCurrencyCode);
-//            CurrencyDto targetCurrency = exchangeRateService.getCurrencyByCode(targetCurrencyCode);
-//
-//            if (baseCurrency == null || targetCurrency == null) {
-//                response.sendError(404, "Base or target, or both currency doesn't exists!");
-//                return;
-//            }
-//
-//            ExchangeRateResponseDto exchangeRate = exchangeRateService.getByCurrencies(baseCurrency, targetCurrency);//должна быть проверка, что обменный курс не null
-//            if (exchangeRate == null) {
-//                response.sendError(404, "Exchange rate doesn't exists!");
-//                return;
-//            }
-//
-//            exchangeRate = exchangeRateService.updateRate(rate, exchangeRate.getId(), baseCurrency, targetCurrency);
-//            response.setStatus(200);
-//            response.setContentType("application/json");
-//            response.setCharacterEncoding("UTF-8");
-//            objectMapper.writeValue(response.getWriter(), exchangeRate);
-//        } catch (SQLException e) {
-//            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//            response.getWriter().write("{\"error\":\"Database error: " + e.getMessage() + "\"}");
-//        } catch (ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
+        String body = request.getReader().lines().collect(Collectors.joining());//rate=0.22
+        if (!isPatchRequestValid(body)) {
+            throw new InvalidRequestException(SC_BAD_REQUEST, "Rate request parameter is missing");
+        }
+        double rate;
+        try {
+            rate = Double.parseDouble(body.substring(5));
+        } catch (NumberFormatException e) {
+            throw new InvalidParamException(SC_BAD_REQUEST, "An incorrect value was entered for the rate parameter");
+        }
+
+        if (!isRateValid(rate)) {
+            throw new InvalidParamException(SC_BAD_REQUEST, "The rate must be greater than 0 and less than 1000");
+        }
+        String baseCode = pair.substring(0, 3);
+        String targetCode = pair.substring(3);
+        rate = roundRate(rate);
+
+        if (!currencyService.isCurrencyExists(baseCode) || !currencyService.isCurrencyExists(targetCode)) {
+            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no currency with base or target currency code");
+        }
+
+        if (!exchangeRateService.isExchangeRateExists(baseCode, targetCode)) {
+            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no exchange rate with such pair of currency codes");
+        }
+
+        ExchangeRateResponseDto targetExchangeRate = exchangeRateService.findByCurrencyCodes(pair);
+
+        ExchangeRateRequestDto exchangeRateRequestDto = new ExchangeRateRequestDto(targetExchangeRate.getId(), baseCode, targetCode, rate);
+        ExchangeRateResponseDto updatedExchangeRate = exchangeRateService.updateRate(exchangeRateRequestDto);
+        objectMapper.writeValue(response.getWriter(), updatedExchangeRate);
     }
 
     @Override
@@ -63,10 +78,16 @@ public class ExchangeRateController extends BaseController {
         objectMapper.writeValue(response.getWriter(), exchangeRateResponseDto);
     }
 
-    private boolean isExchangeRatePatchRequestValid(HttpServletRequest request) {
-        Map<String, String[]> parameters = request.getParameterMap();
-        Set<String> requiredParameters = Set.of("baseCurrencyCode", "targetCurrencyCode", "rate");
-        return parameters.keySet().containsAll(requiredParameters);
+    private boolean isPatchRequestValid(String body) {
+        if (body.isEmpty()) {
+            return false;
+        }
+        return body.substring(0, 5).equals("rate=");
+    }
+
+    private double roundRate(double rate) {
+        BigDecimal bigDecimal = new BigDecimal(rate).setScale(6, RoundingMode.HALF_UP);
+        return bigDecimal.doubleValue();
     }
 }
 

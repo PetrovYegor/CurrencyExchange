@@ -14,7 +14,6 @@ import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 public final class ExchangeRateDao {
     private static final String QUERY_FAILURE_MESSAGE = "Failed to execute the query '%s', something went wrong";
     private static final String FIND_ALL_QUERY = "SELECT id, basecurrencyid, targetcurrencyid, rate FROM ExchangeRates";
-    private static final String FIND_BY_CURRENCY_IDS = "SELECT id, basecurrencyid, targetcurrencyid, rate FROM ExchangeRates WHERE basecurrencyid = ? AND targetcurrencyid = ?";
     private static final String FIND_BY_CURRENCY_CODES = """
             SELECT er.id, er.basecurrencyid, er.targetcurrencyid, er.rate
             FROM ExchangeRates er
@@ -23,6 +22,7 @@ public final class ExchangeRateDao {
             WHERE base_cur.Code = ? AND target_cur.Code = ?
             """;
     private static final String INSERT_EXCHANGE_RATE = "INSERT INTO ExchangeRates (BaseCurrencyId, TargetCurrencyId, Rate) VALUES (?, ?, ?)";
+    private static final String UPDATE_EXCHANGE_RATE = "UPDATE ExchangeRates SET Rate = ? WHERE Id = ?";
 
     public List<ExchangeRate> findAll() {
         List<ExchangeRate> result = new ArrayList<>();
@@ -41,26 +41,6 @@ public final class ExchangeRateDao {
             throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(FIND_ALL_QUERY));
         }
     }
-
-//    public Optional<ExchangeRate> findByCurrencyIds(int baseCurrencyId, int targetCurrencyId) {
-//        try (Connection co = DataSource.getConnection();
-//             PreparedStatement statement = co.prepareStatement(FIND_BY_CURRENCY_CODES)) {
-//            statement.setInt(1, baseCurrencyId);
-//            statement.setInt(2, targetCurrencyId);
-//            ResultSet resultSet = statement.executeQuery();
-//
-//            ExchangeRate exchangeRate = null;
-//
-//            if (resultSet.next()) {
-//                int id = resultSet.getInt("id");
-//                double rate = resultSet.getDouble("rate");
-//                exchangeRate = new ExchangeRate(id, baseCurrencyId, targetCurrencyId, rate);
-//            }
-//            return Optional.ofNullable(exchangeRate);
-//        } catch (SQLException e) {
-//            throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(FIND_BY_CURRENCY_CODES));
-//        }
-//    }
 
     public Optional<ExchangeRate> findByCurrencyCodes(String baseCode, String targetCode) {
         try (Connection co = DataSource.getConnection();
@@ -99,16 +79,16 @@ public final class ExchangeRateDao {
             throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(INSERT_EXCHANGE_RATE));
         }
     }
-//
-//    public void updateRate(double newRate, int exchangeRateId) throws SQLException {
-//        String query = "UPDATE ExchangeRates SET Rate = ? WHERE Id = ?;";
-//        try (Connection co = DatabaseManager.getConnection();
-//             PreparedStatement statement = co.prepareStatement(query)) {
-//            statement.setDouble(1, newRate);
-//            statement.setInt(2, exchangeRateId);
-//            statement.executeUpdate();
-//        } catch (ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+
+    public ExchangeRate updateRate(ExchangeRate exchangeRate) {
+        try (Connection co = DataSource.getConnection();
+             PreparedStatement statement = co.prepareStatement(UPDATE_EXCHANGE_RATE)) {
+            statement.setDouble(1, exchangeRate.getRate());
+            statement.setInt(2, exchangeRate.getId());
+            statement.executeUpdate();
+            return exchangeRate;
+        } catch (SQLException e) {
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(UPDATE_EXCHANGE_RATE));
+        }
+    }
 }

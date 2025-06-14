@@ -3,7 +3,6 @@ package com.github.petrovyegor.currencyexchange.controller.filter;
 import jakarta.servlet.*;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 public class EncodingFilter implements Filter {
     @Override

@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,7 +26,7 @@ public class ExchangeRatesController extends BaseController {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (!isExchangeRatePostRequestValid(request)) {
+        if (!isPostRequestValid(request)) {
             throw new InvalidRequestException(SC_BAD_REQUEST, "One or more http request parameters are missing");
         }
         String baseCode = request.getParameter("baseCurrencyCode").toUpperCase();
@@ -40,6 +42,8 @@ public class ExchangeRatesController extends BaseController {
             throw new InvalidParamException(SC_BAD_REQUEST, "One or more of the parameters are invalid");
         }
 
+        rate = roundRate(rate);
+
         if (!currencyService.isCurrencyExists(baseCode) || !currencyService.isCurrencyExists(targetCode)) {
             throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no currency with base or target currency code");
         }
@@ -54,9 +58,14 @@ public class ExchangeRatesController extends BaseController {
         objectMapper.writeValue(response.getWriter(), createdExchangeRate);
     }
 
-    private boolean isExchangeRatePostRequestValid(HttpServletRequest request) {
+    private boolean isPostRequestValid(HttpServletRequest request) {
         Map<String, String[]> parameters = request.getParameterMap();
         Set<String> requiredParameters = Set.of("baseCurrencyCode", "targetCurrencyCode", "rate");
         return parameters.keySet().containsAll(requiredParameters);
+    }
+
+    private double roundRate(double rate) {
+        BigDecimal bigDecimal = new BigDecimal(rate).setScale(6, RoundingMode.HALF_UP);
+        return bigDecimal.doubleValue();
     }
 }

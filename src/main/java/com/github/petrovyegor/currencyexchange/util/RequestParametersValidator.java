@@ -28,11 +28,12 @@ public class RequestParametersValidator {
         return isCodeValid(code) && isNameValid(name) && isSignValid(sign);
     }
 
-    private static boolean isRateValid(double rate) {
+    public static boolean isRateValid(double rate) {
         return rate > MIN_RATE_VALUE && rate <= MAX_RATE_VALUE;
     }
 
     public static boolean isExchangeRatePostParametersValid(String sourceCode, String targetCode, double rate) {
         return isCodeValid(sourceCode) && isCodeValid(targetCode) && isRateValid(rate);
     }
+
 }
