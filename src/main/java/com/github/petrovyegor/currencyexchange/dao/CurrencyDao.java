@@ -12,7 +12,6 @@ import java.util.Optional;
 import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 
 public final class CurrencyDao {
-    private static final String QUERY_FAILURE_MESSAGE = "Failed to execute the query '%s', something went wrong";
     private static final String FIND_ALL_QUERY = "SELECT Id, Code, FullName, Sign FROM Currencies";
     private static final String FIND_BY_CODE = "SELECT Id, Code, FullName, Sign FROM Currencies WHERE Code = ?";
     private static final String FIND_BY_ID = "SELECT Id, Code, FullName, Sign FROM Currencies WHERE id = ?";
@@ -37,7 +36,7 @@ public final class CurrencyDao {
             }
             return Optional.ofNullable(currency);
         } catch (SQLException e) {
-            throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(FIND_BY_CODE));
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format("Failed to get currency by code '%s'", code));
         }
     }
 
@@ -55,7 +54,7 @@ public final class CurrencyDao {
             }
             return result;
         } catch (SQLException e) {
-            throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(FIND_ALL_QUERY));
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format("Failed to get all currencies"));
         }
     }
 
@@ -71,7 +70,7 @@ public final class CurrencyDao {
             currency.setId(resultSet.getInt(1));
             return currency;
         } catch (SQLException e) {
-            throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(FIND_ALL_QUERY));
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format("Failed to save currency with code '%s', fullname '%s', sign '%s'", currency.getCode(), currency.getFullName(), currency.getSign()));
         }
     }
 
@@ -93,7 +92,7 @@ public final class CurrencyDao {
             }
             return Optional.ofNullable(currency);
         } catch (SQLException e) {
-            throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(FIND_BY_ID));
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format("Failed to get currency by id '%s'", id));
         }
     }
 }

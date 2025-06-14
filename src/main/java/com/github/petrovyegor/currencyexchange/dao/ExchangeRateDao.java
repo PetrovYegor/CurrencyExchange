@@ -12,7 +12,6 @@ import java.util.Optional;
 import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 
 public final class ExchangeRateDao {
-    private static final String QUERY_FAILURE_MESSAGE = "Failed to execute the query '%s', something went wrong";
     private static final String FIND_ALL_QUERY = "SELECT id, basecurrencyid, targetcurrencyid, rate FROM ExchangeRates";
     private static final String FIND_BY_CURRENCY_CODES = """
             SELECT er.id, er.basecurrencyid, er.targetcurrencyid, er.rate
@@ -38,7 +37,7 @@ public final class ExchangeRateDao {
             }
             return result;
         } catch (SQLException e) {
-            throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(FIND_ALL_QUERY));
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format("Failed to get all exchange rates"));
         }
     }
 
@@ -60,7 +59,7 @@ public final class ExchangeRateDao {
             }
             return Optional.ofNullable(exchangeRate);
         } catch (SQLException e) {
-            throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(FIND_BY_CURRENCY_CODES));
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format("Failed to get exchange rate by base currency code '%s' and target currency code '%s'", baseCode, targetCode));
         }
     }
 
@@ -76,7 +75,7 @@ public final class ExchangeRateDao {
             exchangeRate.setId(resultSet.getInt(1));
             return exchangeRate;
         } catch (SQLException e) {
-            throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(INSERT_EXCHANGE_RATE));
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format("Failed to save exchange rate with base currency id '%s', target currency id '%s' and rate '%s'", exchangeRate.getBaseCurrencyId(), exchangeRate.getTargetCurrencyId(), exchangeRate.getRate()));
         }
     }
 
@@ -88,7 +87,7 @@ public final class ExchangeRateDao {
             statement.executeUpdate();
             return exchangeRate;
         } catch (SQLException e) {
-            throw new DBException(SC_INTERNAL_SERVER_ERROR, QUERY_FAILURE_MESSAGE.formatted(UPDATE_EXCHANGE_RATE));
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format("Failed to update exchange rate with id '%s' and new rate value '%s'", exchangeRate.getId(), exchangeRate.getRate()));
         }
     }
 }
