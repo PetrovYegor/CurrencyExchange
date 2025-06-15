@@ -36,8 +36,8 @@
         <servlet-class>com.github.petrovyegor.currencyexchange.controller.ExchangeRateController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ConversionController</servlet-name>
-        <servlet-class>com.github.petrovyegor.currencyexchange.controller.ConversionController</servlet-class>
+        <servlet-name>ExchangeController</servlet-name>
+        <servlet-class>com.github.petrovyegor.currencyexchange.controller.ExchangeController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CurrenciesController</servlet-name>
@@ -56,7 +56,7 @@
         <url-pattern>/exchangeRate/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ConversionController</servlet-name>
+        <servlet-name>ExchangeController</servlet-name>
         <url-pattern>/exchange</url-pattern>
     </servlet-mapping>
 </web-app>

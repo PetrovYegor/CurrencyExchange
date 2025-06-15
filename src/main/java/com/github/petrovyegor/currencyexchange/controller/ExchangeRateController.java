@@ -51,7 +51,6 @@ public class ExchangeRateController extends BaseController {
         }
         String baseCode = pair.substring(0, 3);
         String targetCode = pair.substring(3);
-        rate = roundRate(rate);
 
         if (!currencyService.isCurrencyExists(baseCode) || !currencyService.isCurrencyExists(targetCode)) {
             throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no currency with base or target currency code");
@@ -61,7 +60,7 @@ public class ExchangeRateController extends BaseController {
             throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no exchange rate with such pair of currency codes");
         }
 
-        ExchangeRateResponseDto targetExchangeRate = exchangeRateService.findByCurrencyCodes(pair);
+        ExchangeRateResponseDto targetExchangeRate = exchangeRateService.findByCurrencyConcatenatedCodes(pair);
 
         ExchangeRateRequestDto exchangeRateRequestDto = new ExchangeRateRequestDto(targetExchangeRate.getId(), baseCode, targetCode, rate);
         ExchangeRateResponseDto updatedExchangeRate = exchangeRateService.updateRate(exchangeRateRequestDto);
@@ -74,7 +73,7 @@ public class ExchangeRateController extends BaseController {
         if (!isPairOfCodesValid(pair)) {
             throw new InvalidParamException(SC_BAD_REQUEST, "Pair of currency codes parameter is not valid");
         }
-        ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.findByCurrencyCodes(pair);
+        ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.findByCurrencyConcatenatedCodes(pair);
         objectMapper.writeValue(response.getWriter(), exchangeRateResponseDto);
     }
 
@@ -83,11 +82,6 @@ public class ExchangeRateController extends BaseController {
             return false;
         }
         return body.substring(0, 5).equals("rate=");
-    }
-
-    private double roundRate(double rate) {
-        BigDecimal bigDecimal = new BigDecimal(rate).setScale(6, RoundingMode.HALF_UP);
-        return bigDecimal.doubleValue();
     }
 }
 

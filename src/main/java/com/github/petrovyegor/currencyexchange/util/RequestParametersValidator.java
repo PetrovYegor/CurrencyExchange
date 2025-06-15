@@ -7,6 +7,7 @@ public class RequestParametersValidator {
     private static final String CURRENCY_SIGN_PATTERN = "[a-zA-Z]{1,10}";
     private static final double MIN_RATE_VALUE = 0;
     private static final double MAX_RATE_VALUE = 1000;
+    private static final double MIN_AMOUNT_VALUE = 0;
 
     public static boolean isCodeValid(String code) {
         return code.matches(CURRENCY_CODE_PATTERN);
@@ -32,8 +33,16 @@ public class RequestParametersValidator {
         return rate > MIN_RATE_VALUE && rate <= MAX_RATE_VALUE;
     }
 
+
     public static boolean isExchangeRatePostParametersValid(String sourceCode, String targetCode, double rate) {
         return isCodeValid(sourceCode) && isCodeValid(targetCode) && isRateValid(rate);
     }
 
+    public static boolean isExchangeGetParametersValid(String sourceCode, String targetCode, double amount){
+        return  isCodeValid(sourceCode) && isCodeValid(targetCode) && isAmountValid(amount);
+    }
+
+    private static boolean isAmountValid(double amount){
+        return amount > MIN_AMOUNT_VALUE;
+    }
 }

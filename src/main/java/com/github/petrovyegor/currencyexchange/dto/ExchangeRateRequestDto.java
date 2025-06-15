@@ -39,4 +39,16 @@ public class ExchangeRateRequestDto {
     public void setId(int id) {
         this.id = id;
     }
+
+    public void setBaseCurrencyCode(String baseCurrencyCode) {
+        this.baseCurrencyCode = baseCurrencyCode;
+    }
+
+    public void setTargetCurrencyCode(String targetCurrencyCode) {
+        this.targetCurrencyCode = targetCurrencyCode;
+    }
+
+    public void setRate(double rate) {
+        this.rate = rate;
+    }
 }
