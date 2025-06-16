@@ -14,6 +14,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 public class ExchangeService {
     private final static String CROSS_CURRENCY_CODE = "USD";
     private final static int ROUND_PRECISION = 2;
+    private final static String DIRECT_CONVERSION_TYPE = "";
     ExchangeRateService exchangeRateService = new ExchangeRateService();
 
     public ExchangeResponseDto convert(ExchangeRequestDto exchangeRequestDto) {
@@ -23,7 +24,7 @@ public class ExchangeService {
         if (isDirectConversion(baseCode, targetCode)) {
             return doDirectConversion(baseCode, targetCode, amount);
         }
-        if (isOpposingConversion(baseCode, targetCode)) {
+        if (isReversedConversion(baseCode, targetCode)) {
             return doOpposingConversion(baseCode, targetCode, amount);
         }
         if (isCrossConversion(baseCode, targetCode)) {
@@ -52,14 +53,14 @@ public class ExchangeService {
     }
 
     private ExchangeResponseDto doCrossConversion(String baseCode, String targetCode, double amount) {
-        ExchangeRateResponseDto from = exchangeRateService.findByCurrencyCodes(CROSS_CURRENCY_CODE, baseCode);
-        ExchangeRateResponseDto to = exchangeRateService.findByCurrencyCodes(CROSS_CURRENCY_CODE, targetCode);
-        double rate = 1 / from.getRate() * to.getRate();
+        ExchangeRateResponseDto sourcexchangeRate = exchangeRateService.findByCurrencyCodes(CROSS_CURRENCY_CODE, baseCode);
+        ExchangeRateResponseDto targetExchangeRate = exchangeRateService.findByCurrencyCodes(CROSS_CURRENCY_CODE, targetCode);
+        double rate = 1 / sourcexchangeRate.getRate() * targetExchangeRate.getRate();
         rate = roundRate(rate);
         double convertedAmount = amount * rate;
 
-        CurrencyResponseDto baseCurrency = from.getTargetCurrency();
-        CurrencyResponseDto targetCurrency = to.getTargetCurrency();
+        CurrencyResponseDto baseCurrency = sourcexchangeRate.getTargetCurrency();
+        CurrencyResponseDto targetCurrency = targetExchangeRate.getTargetCurrency();
 
         return new ExchangeResponseDto(baseCurrency, targetCurrency, rate, amount, convertedAmount);
     }
@@ -78,7 +79,7 @@ public class ExchangeService {
         return exchangeRateService.isExchangeRateExists(baseCode, targetCode);
     }
 
-    private boolean isOpposingConversion(String baseCode, String targetCode) {
+    private boolean isReversedConversion(String baseCode, String targetCode) {
         return exchangeRateService.isExchangeRateExists(targetCode, baseCode);
     }
 
