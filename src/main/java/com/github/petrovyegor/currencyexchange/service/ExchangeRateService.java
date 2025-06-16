@@ -60,10 +60,14 @@ public class ExchangeRateService {
         int baseCurrencyId = currencyService.findByCode(source.getBaseCurrencyCode()).getId();
         int targetCurrencyId = currencyService.findByCode(source.getTargetCurrencyCode()).getId();
         double rate = source.getRate();
-        if (source.getId() == 0) {
+        if (isExchangeRateNew(source)) {
             return new ExchangeRate(baseCurrencyId, targetCurrencyId, rate);
         }
         return new ExchangeRate(id, baseCurrencyId, targetCurrencyId, rate);
+    }
+
+    private boolean isExchangeRateNew(ExchangeRateRequestDto source) {
+        return source.getId() == 0;
     }
 
     private double roundRate(double rate) {

@@ -9,8 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,7 +42,7 @@ public class ExchangeController extends BaseController {
         }
 
         ExchangeRequestDto exchangeRequestDto = new ExchangeRequestDto(baseCode, targetCode, amount);
-        ExchangeResponseDto exchangeResponsedto = exchangeService.convertCurrencies(exchangeRequestDto);
+        ExchangeResponseDto exchangeResponsedto = exchangeService.convert(exchangeRequestDto);
         objectMapper.writeValue(response.getWriter(), exchangeResponsedto);
     }
 

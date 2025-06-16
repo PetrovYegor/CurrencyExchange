@@ -16,17 +16,17 @@ public class ExchangeService {
     private final static int ROUND_PRECISION = 2;
     ExchangeRateService exchangeRateService = new ExchangeRateService();
 
-    public ExchangeResponseDto convertCurrencies(ExchangeRequestDto exchangeRequestDto) {
+    public ExchangeResponseDto convert(ExchangeRequestDto exchangeRequestDto) {
         String baseCode = exchangeRequestDto.getBaseCurrencyCode();
         String targetCode = exchangeRequestDto.getTargetCurrencyCode();
         double amount = roundAmount(exchangeRequestDto.getAmount());
-        if (exchangeRateService.isExchangeRateExists(baseCode, targetCode)) {
+        if (isDirectConversion(baseCode, targetCode)) {
             return doDirectConversion(baseCode, targetCode, amount);
         }
-        if (exchangeRateService.isExchangeRateExists(targetCode, baseCode)) {
+        if (isOpposingConversion(baseCode, targetCode)) {
             return doOpposingConversion(baseCode, targetCode, amount);
         }
-        if (exchangeRateService.isExchangeRateExists(CROSS_CURRENCY_CODE, baseCode) && exchangeRateService.isExchangeRateExists(CROSS_CURRENCY_CODE, targetCode)) {
+        if (isCrossConversion(baseCode, targetCode)) {
             return doCrossConversion(baseCode, targetCode, amount);
         }
         throw new RestErrorException(SC_NOT_FOUND, String.format("There is no direct, opposite or cross exchange rate for currency codes '%s' and '%s'", baseCode, targetCode));
@@ -72,5 +72,17 @@ public class ExchangeService {
     private double roundAmount(double amount) {
         BigDecimal bigDecimal = new BigDecimal(amount).setScale(ROUND_PRECISION, RoundingMode.HALF_UP);
         return bigDecimal.doubleValue();
+    }
+
+    private boolean isDirectConversion(String baseCode, String targetCode) {
+        return exchangeRateService.isExchangeRateExists(baseCode, targetCode);
+    }
+
+    private boolean isOpposingConversion(String baseCode, String targetCode) {
+        return exchangeRateService.isExchangeRateExists(targetCode, baseCode);
+    }
+
+    private boolean isCrossConversion(String baseCode, String targetCode) {
+        return exchangeRateService.isExchangeRateExists(CROSS_CURRENCY_CODE, baseCode) && exchangeRateService.isExchangeRateExists(CROSS_CURRENCY_CODE, targetCode);
     }
 }
