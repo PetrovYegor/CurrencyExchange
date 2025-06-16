@@ -9,8 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.stream.Collectors;
 
 import static com.github.petrovyegor.currencyexchange.util.RequestParametersValidator.isPairOfCodesValid;
@@ -60,7 +58,7 @@ public class ExchangeRateController extends BaseController {
             throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no exchange rate with such pair of currency codes");
         }
 
-        ExchangeRateResponseDto targetExchangeRate = exchangeRateService.findByCurrencyConcatenatedCodes(pair);
+        ExchangeRateResponseDto targetExchangeRate = exchangeRateService.findByCurrencyCodes(baseCode, targetCode);
 
         ExchangeRateRequestDto exchangeRateRequestDto = new ExchangeRateRequestDto(targetExchangeRate.getId(), baseCode, targetCode, rate);
         ExchangeRateResponseDto updatedExchangeRate = exchangeRateService.updateRate(exchangeRateRequestDto);
@@ -73,7 +71,9 @@ public class ExchangeRateController extends BaseController {
         if (!isPairOfCodesValid(pair)) {
             throw new InvalidParamException(SC_BAD_REQUEST, "Pair of currency codes parameter is not valid");
         }
-        ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.findByCurrencyConcatenatedCodes(pair);
+        String baseCode = pair.substring(0, 3);
+        String targetCode = pair.substring(3);
+        ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.findByCurrencyCodes(baseCode, targetCode);
         objectMapper.writeValue(response.getWriter(), exchangeRateResponseDto);
     }
 

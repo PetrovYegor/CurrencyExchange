@@ -32,12 +32,6 @@ public class ExchangeRateService {
         return new ExchangeRateResponseDto(exchangeRate.getId(), baseCurrency, targetCurrency, exchangeRate.getRate());
     }
 
-    public ExchangeRateResponseDto findByCurrencyConcatenatedCodes(String pair) {
-        String baseCode = pair.substring(0, 3);
-        String targetCode = pair.substring(3);
-        return findByCurrencyCodes(baseCode, targetCode);
-    }
-
     public ExchangeRateResponseDto findByCurrencyCodes(String baseCode, String targetCode) {
         ExchangeRate exchangeRate = exchangeRateDao.findByCurrencyCodes(baseCode, targetCode)
                 .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no exchange rate with this pair of currency codes"));
