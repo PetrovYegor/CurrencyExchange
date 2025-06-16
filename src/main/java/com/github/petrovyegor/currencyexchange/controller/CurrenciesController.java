@@ -35,7 +35,8 @@ public class CurrenciesController extends BaseController {
             throw new InvalidParamException(SC_BAD_REQUEST, "One or more of the parameters are invalid");
         }
 
-        if (currencyService.isCurrencyExists(code)) {
+        boolean isCurrencyExists = currencyService.isCurrencyExists(code);
+        if (isCurrencyExists) {
             throw new RestErrorException(SC_CONFLICT, "Currency already exists!");
         }
         CurrencyRequestDto currencyRequestDto = new CurrencyRequestDto(code, name, sign);

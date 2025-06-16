@@ -9,8 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,11 +40,13 @@ public class ExchangeRatesController extends BaseController {
             throw new InvalidParamException(SC_BAD_REQUEST, "One or more of the parameters are invalid");
         }
 
-        if (!currencyService.isCurrencyExists(baseCode) || !currencyService.isCurrencyExists(targetCode)) {
+        boolean areCurrenciesExists = currencyService.isCurrencyExists(baseCode) && currencyService.isCurrencyExists(targetCode);
+        if (!areCurrenciesExists) {
             throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no currency with base or target currency code");
         }
 
-        if (exchangeRateService.isExchangeRateExists(baseCode, targetCode)) {
+        boolean isExchangeRateExists = exchangeRateService.isExchangeRateExists(baseCode, targetCode);
+        if (isExchangeRateExists) {
             throw new RestErrorException(SC_CONFLICT, "Exchange rate already exists with such pair of currency codes");
         }
 

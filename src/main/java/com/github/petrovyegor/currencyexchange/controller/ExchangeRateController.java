@@ -50,11 +50,13 @@ public class ExchangeRateController extends BaseController {
         String baseCode = pair.substring(0, 3);
         String targetCode = pair.substring(3);
 
-        if (!currencyService.isCurrencyExists(baseCode) || !currencyService.isCurrencyExists(targetCode)) {
+        boolean areCurrenciesExists = currencyService.isCurrencyExists(baseCode) && currencyService.isCurrencyExists(targetCode);
+        if (!areCurrenciesExists) {
             throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no currency with base or target currency code");
         }
 
-        if (!exchangeRateService.isExchangeRateExists(baseCode, targetCode)) {
+        boolean isExchangeRateExists = exchangeRateService.isExchangeRateExists(baseCode, targetCode);
+        if (!isExchangeRateExists) {
             throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no exchange rate with such pair of currency codes");
         }
 
