@@ -9,11 +9,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
-import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static com.github.petrovyegor.currencyexchange.util.RequestParametersValidator.isExchangeGetParametersValid;
+import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 public class ExchangeController extends BaseController {
 
@@ -26,9 +27,9 @@ public class ExchangeController extends BaseController {
         String baseCode = request.getParameter("from");
         String targetCode = request.getParameter("to");
 
-        double amount;
+        BigDecimal amount;
         try {
-            amount = Double.parseDouble(request.getParameter("amount"));
+            amount = new BigDecimal(request.getParameter("amount"));
         } catch (NumberFormatException e) {
             throw new InvalidParamException(SC_BAD_REQUEST, "An incorrect value was entered for the amount parameter");
         }

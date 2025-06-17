@@ -1,35 +1,25 @@
 package com.github.petrovyegor.currencyexchange.dto;
 
+import java.math.BigDecimal;
+
 public class ExchangeRateRequestDto {
     private int id;
     private String baseCurrencyCode;
     private String targetCurrencyCode;
-    private double rate;
+    private BigDecimal rate;
 
-    public ExchangeRateRequestDto(String baseCurrencyCode, String targetCurrencyCode, double rate) {
+    public ExchangeRateRequestDto(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) {
         this.id = 0;
         this.baseCurrencyCode = baseCurrencyCode;
         this.targetCurrencyCode = targetCurrencyCode;
         this.rate = rate;
     }
 
-    public ExchangeRateRequestDto(int id, String baseCurrencyCode, String targetCurrencyCode, double rate) {
+    public ExchangeRateRequestDto(int id, String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) {
         this.id = id;
         this.baseCurrencyCode = baseCurrencyCode;
         this.targetCurrencyCode = targetCurrencyCode;
         this.rate = rate;
-    }
-
-    public String getBaseCurrencyCode() {
-        return baseCurrencyCode;
-    }
-
-    public String getTargetCurrencyCode() {
-        return targetCurrencyCode;
-    }
-
-    public double getRate() {
-        return rate;
     }
 
     public int getId() {
@@ -40,15 +30,27 @@ public class ExchangeRateRequestDto {
         this.id = id;
     }
 
+    public String getBaseCurrencyCode() {
+        return baseCurrencyCode;
+    }
+
     public void setBaseCurrencyCode(String baseCurrencyCode) {
         this.baseCurrencyCode = baseCurrencyCode;
+    }
+
+    public String getTargetCurrencyCode() {
+        return targetCurrencyCode;
     }
 
     public void setTargetCurrencyCode(String targetCurrencyCode) {
         this.targetCurrencyCode = targetCurrencyCode;
     }
 
-    public void setRate(double rate) {
+    public BigDecimal getRate() {
+        return rate;
+    }
+
+    public void setRate(BigDecimal rate) {
         this.rate = rate;
     }
 }

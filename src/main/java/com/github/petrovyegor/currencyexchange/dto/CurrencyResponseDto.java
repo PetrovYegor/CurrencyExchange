@@ -6,7 +6,7 @@ public class CurrencyResponseDto {
     private String fullName;
     private String sign;
 
-    public CurrencyResponseDto(int id, String code, String fullName, String sign){
+    public CurrencyResponseDto(int id, String code, String fullName, String sign) {
         this.id = id;
         this.code = code;
         this.fullName = fullName;

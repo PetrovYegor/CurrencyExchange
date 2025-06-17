@@ -43,14 +43,14 @@ public class ExchangeRateService {
     }
 
     public ExchangeRateResponseDto createExchangeRate(ExchangeRateRequestDto exchangeRateRequestDto) {
-        double currentRate = exchangeRateRequestDto.getRate();
+        BigDecimal currentRate = exchangeRateRequestDto.getRate();
         exchangeRateRequestDto.setRate(roundRate(currentRate));
         ExchangeRate exchangeRate = exchangeRateDao.save(toExchangeRate(exchangeRateRequestDto));
         return toDto(exchangeRate);
     }
 
     public ExchangeRateResponseDto updateRate(ExchangeRateRequestDto exchangeRateRequestDto) {
-        double currentRate = exchangeRateRequestDto.getRate();
+        BigDecimal currentRate = exchangeRateRequestDto.getRate();
         exchangeRateRequestDto.setRate(roundRate(currentRate));
         return toDto(exchangeRateDao.updateRate(toExchangeRate(exchangeRateRequestDto)));
     }
@@ -59,7 +59,7 @@ public class ExchangeRateService {
         int id = source.getId();
         int baseCurrencyId = currencyService.findByCode(source.getBaseCurrencyCode()).getId();
         int targetCurrencyId = currencyService.findByCode(source.getTargetCurrencyCode()).getId();
-        double rate = source.getRate();
+        BigDecimal rate = source.getRate();
         if (isExchangeRateNew(source)) {
             return new ExchangeRate(baseCurrencyId, targetCurrencyId, rate);
         }
@@ -70,9 +70,9 @@ public class ExchangeRateService {
         return source.getId() == 0;
     }
 
-    private double roundRate(double rate) {
-        BigDecimal bigDecimal = new BigDecimal(rate).setScale(6, RoundingMode.HALF_UP);
-        return bigDecimal.doubleValue();
+    private BigDecimal roundRate(BigDecimal rate) {
+        rate.setScale(6, RoundingMode.HALF_UP);
+        return rate;
     }
 }
 

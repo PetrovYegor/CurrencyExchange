@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
 import static com.github.petrovyegor.currencyexchange.util.RequestParametersValidator.isPairOfCodesValid;
@@ -37,9 +38,9 @@ public class ExchangeRateController extends BaseController {
         if (!isPatchRequestValid(body)) {
             throw new InvalidRequestException(SC_BAD_REQUEST, "Rate request parameter is missing");
         }
-        double rate;
+        BigDecimal rate;
         try {
-            rate = Double.parseDouble(body.substring(5));
+            rate = new BigDecimal(body.substring(5));
         } catch (NumberFormatException e) {
             throw new InvalidParamException(SC_BAD_REQUEST, "An incorrect value was entered for the rate parameter");
         }

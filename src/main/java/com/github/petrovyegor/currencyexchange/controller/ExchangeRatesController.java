@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,9 +30,9 @@ public class ExchangeRatesController extends BaseController {
         }
         String baseCode = request.getParameter("baseCurrencyCode").toUpperCase();
         String targetCode = request.getParameter("targetCurrencyCode").toUpperCase();
-        double rate;
+        BigDecimal rate;
         try {
-            rate = Double.parseDouble(request.getParameter("rate"));
+            rate = new BigDecimal(request.getParameter("rate"));
         } catch (NumberFormatException e) {
             throw new InvalidParamException(SC_BAD_REQUEST, "An incorrect value was entered for the rate parameter");
         }

@@ -14,13 +14,14 @@ import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 public class ExchangeService {
     private final static String CROSS_CURRENCY_CODE = "USD";
     private final static int ROUND_PRECISION = 2;
-    private final static String DIRECT_CONVERSION_TYPE = "";
+    private final static BigDecimal RATE_CALCULATION_DIVIDENT = new BigDecimal(1);
     ExchangeRateService exchangeRateService = new ExchangeRateService();
+    private final static int DIVISION_PRECISION = 2;
 
     public ExchangeResponseDto convert(ExchangeRequestDto exchangeRequestDto) {
         String baseCode = exchangeRequestDto.getBaseCurrencyCode();
         String targetCode = exchangeRequestDto.getTargetCurrencyCode();
-        double amount = roundAmount(exchangeRequestDto.getAmount());
+        BigDecimal amount = roundAmount(exchangeRequestDto.getAmount());
         if (isDirectConversion(baseCode, targetCode)) {
             return doDirectConversion(baseCode, targetCode, amount);
         }
@@ -33,31 +34,31 @@ public class ExchangeService {
         throw new RestErrorException(SC_NOT_FOUND, String.format("There is no direct, opposite or cross exchange rate for currency codes '%s' and '%s'", baseCode, targetCode));
     }
 
-    private ExchangeResponseDto doDirectConversion(String baseCode, String targetCode, double amount) {
+    private ExchangeResponseDto doDirectConversion(String baseCode, String targetCode, BigDecimal amount) {
         ExchangeRateResponseDto exchangeRate = exchangeRateService.findByCurrencyCodes(baseCode, targetCode);
         CurrencyResponseDto baseCurrency = exchangeRate.getBaseCurrency();
         CurrencyResponseDto targetCurrency = exchangeRate.getTargetCurrency();
-        double rate = exchangeRate.getRate();
-        double convertedAmount = amount * rate;
+        BigDecimal rate = exchangeRate.getRate();
+        BigDecimal convertedAmount = amount.multiply(rate);
         return new ExchangeResponseDto(baseCurrency, targetCurrency, rate, amount, convertedAmount);
     }
 
-    private ExchangeResponseDto doOpposingConversion(String baseCode, String targetCode, double amount) {
+    private ExchangeResponseDto doOpposingConversion(String baseCode, String targetCode, BigDecimal amount) {
         ExchangeRateResponseDto exchangeRate = exchangeRateService.findByCurrencyCodes(targetCode, baseCode);
         CurrencyResponseDto baseCurrency = exchangeRate.getBaseCurrency();
         CurrencyResponseDto targetCurrency = exchangeRate.getTargetCurrency();
-        double rate = 1 / exchangeRate.getRate();
+        BigDecimal rate = RATE_CALCULATION_DIVIDENT.divide(exchangeRate.getRate(),DIVISION_PRECISION, RoundingMode.HALF_UP);
         rate = roundRate(rate);
-        double convertedAmount = amount * rate;
+        BigDecimal convertedAmount = amount.multiply(rate);
         return new ExchangeResponseDto(targetCurrency, baseCurrency, rate, amount, convertedAmount);
     }
 
-    private ExchangeResponseDto doCrossConversion(String baseCode, String targetCode, double amount) {
+    private ExchangeResponseDto doCrossConversion(String baseCode, String targetCode, BigDecimal amount) {
         ExchangeRateResponseDto sourcexchangeRate = exchangeRateService.findByCurrencyCodes(CROSS_CURRENCY_CODE, baseCode);
         ExchangeRateResponseDto targetExchangeRate = exchangeRateService.findByCurrencyCodes(CROSS_CURRENCY_CODE, targetCode);
-        double rate = 1 / sourcexchangeRate.getRate() * targetExchangeRate.getRate();
+        BigDecimal rate = RATE_CALCULATION_DIVIDENT.divide(sourcexchangeRate.getRate().multiply(targetExchangeRate.getRate()));
         rate = roundRate(rate);
-        double convertedAmount = amount * rate;
+        BigDecimal convertedAmount = amount.multiply(rate);
 
         CurrencyResponseDto baseCurrency = sourcexchangeRate.getTargetCurrency();
         CurrencyResponseDto targetCurrency = targetExchangeRate.getTargetCurrency();
@@ -65,14 +66,14 @@ public class ExchangeService {
         return new ExchangeResponseDto(baseCurrency, targetCurrency, rate, amount, convertedAmount);
     }
 
-    private double roundRate(double rate) {
-        BigDecimal bigDecimal = new BigDecimal(rate).setScale(ROUND_PRECISION, RoundingMode.HALF_UP);
-        return bigDecimal.doubleValue();
+    private BigDecimal roundRate(BigDecimal rate) {
+        rate.setScale(ROUND_PRECISION, RoundingMode.HALF_UP);
+        return rate;
     }
 
-    private double roundAmount(double amount) {
-        BigDecimal bigDecimal = new BigDecimal(amount).setScale(ROUND_PRECISION, RoundingMode.HALF_UP);
-        return bigDecimal.doubleValue();
+    private BigDecimal roundAmount(BigDecimal amount) {
+        amount.setScale(ROUND_PRECISION, RoundingMode.HALF_UP);
+        return amount;
     }
 
     private boolean isDirectConversion(String baseCode, String targetCode) {

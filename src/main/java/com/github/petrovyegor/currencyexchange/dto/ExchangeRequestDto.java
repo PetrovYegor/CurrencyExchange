@@ -1,11 +1,13 @@
 package com.github.petrovyegor.currencyexchange.dto;
 
+import java.math.BigDecimal;
+
 public class ExchangeRequestDto {
     private String baseCurrencyCode;
     private String targetCurrencyCode;
-    private double amount;
+    private BigDecimal amount;
 
-    public ExchangeRequestDto(String baseCurrencyCode, String targetCurrencyCode, double amount) {
+    public ExchangeRequestDto(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) {
         this.baseCurrencyCode = baseCurrencyCode;
         this.targetCurrencyCode = targetCurrencyCode;
         this.amount = amount;
@@ -27,11 +29,11 @@ public class ExchangeRequestDto {
         this.targetCurrencyCode = targetCurrencyCode;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 }

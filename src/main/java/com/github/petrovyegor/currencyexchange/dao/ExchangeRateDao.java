@@ -4,6 +4,7 @@ import com.github.petrovyegor.currencyexchange.exception.DBException;
 import com.github.petrovyegor.currencyexchange.model.ExchangeRate;
 import com.github.petrovyegor.currencyexchange.util.DataSource;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public final class ExchangeRateDao {
                 int id = resultSet.getInt("id");
                 int baseCurrencyId = resultSet.getInt("basecurrencyid");
                 int targetCurrencyId = resultSet.getInt("targetcurrencyid");
-                double rate = resultSet.getDouble("rate");
+                BigDecimal rate = new BigDecimal("rate");
                 result.add(new ExchangeRate(id, baseCurrencyId, targetCurrencyId, rate));
             }
             return result;
@@ -54,7 +55,7 @@ public final class ExchangeRateDao {
                 int id = resultSet.getInt("id");
                 int baseCurrencyId = resultSet.getInt("basecurrencyid");
                 int targetCurrencyId = resultSet.getInt("targetcurrencyid");
-                double rate = resultSet.getDouble("rate");
+                BigDecimal rate = new BigDecimal("rate");
                 exchangeRate = new ExchangeRate(id, baseCurrencyId, targetCurrencyId, rate);
             }
             return Optional.ofNullable(exchangeRate);
@@ -68,7 +69,7 @@ public final class ExchangeRateDao {
              PreparedStatement statement = co.prepareStatement(INSERT_EXCHANGE_RATE)) {
             statement.setInt(1, exchangeRate.getBaseCurrencyId());
             statement.setInt(2, exchangeRate.getTargetCurrencyId());
-            statement.setDouble(3, exchangeRate.getRate());
+            statement.setBigDecimal(3, exchangeRate.getRate());
             statement.executeUpdate();
             ResultSet resultSet = statement.getGeneratedKeys();
 
@@ -82,7 +83,7 @@ public final class ExchangeRateDao {
     public ExchangeRate updateRate(ExchangeRate exchangeRate) {
         try (Connection co = DataSource.getConnection();
              PreparedStatement statement = co.prepareStatement(UPDATE_EXCHANGE_RATE)) {
-            statement.setDouble(1, exchangeRate.getRate());
+            statement.setBigDecimal(1, exchangeRate.getRate());
             statement.setInt(2, exchangeRate.getId());
             statement.executeUpdate();
             return exchangeRate;

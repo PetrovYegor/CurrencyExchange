@@ -1,15 +1,15 @@
 package com.github.petrovyegor.currencyexchange.dto;
 
-import com.github.petrovyegor.currencyexchange.model.Currency;
+import java.math.BigDecimal;
 
 public class ExchangeResponseDto {
     private CurrencyResponseDto baseCurrency;
     private CurrencyResponseDto targetCurrency;
-    private double rate;
-    private double amount;
-    private double convertedAmount;
+    private BigDecimal rate;
+    private BigDecimal amount;
+    private BigDecimal convertedAmount;
 
-    public ExchangeResponseDto(CurrencyResponseDto baseCurrency, CurrencyResponseDto targetCurrency, double rate, double amount, double convertedAmount) {
+    public ExchangeResponseDto(CurrencyResponseDto baseCurrency, CurrencyResponseDto targetCurrency, BigDecimal rate, BigDecimal amount, BigDecimal convertedAmount) {
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
         this.rate = rate;
@@ -30,30 +30,30 @@ public class ExchangeResponseDto {
     }
 
     public void setTargetCurrency(CurrencyResponseDto targetCurrency) {
-        targetCurrency = targetCurrency;
+        this.targetCurrency = targetCurrency;
     }
 
-    public double getRate() {
+    public BigDecimal getRate() {
         return rate;
     }
 
-    public void setRate(double rate) {
+    public void setRate(BigDecimal rate) {
         this.rate = rate;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
-    public double getConvertedAmount() {
+    public BigDecimal getConvertedAmount() {
         return convertedAmount;
     }
 
-    public void setConvertedAmount(double convertedAmount) {
+    public void setConvertedAmount(BigDecimal convertedAmount) {
         this.convertedAmount = convertedAmount;
     }
 }

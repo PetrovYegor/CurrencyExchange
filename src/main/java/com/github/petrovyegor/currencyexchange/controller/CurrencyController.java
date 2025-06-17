@@ -7,8 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static com.github.petrovyegor.currencyexchange.util.RequestParametersValidator.isCodeValid;
+import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 public class CurrencyController extends BaseController {
 

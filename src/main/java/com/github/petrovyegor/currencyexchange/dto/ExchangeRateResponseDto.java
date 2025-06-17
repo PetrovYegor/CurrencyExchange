@@ -1,13 +1,15 @@
 package com.github.petrovyegor.currencyexchange.dto;
 
+import java.math.BigDecimal;
+
 public class ExchangeRateResponseDto {
 
     private int id;
     private CurrencyResponseDto baseCurrency;
     private CurrencyResponseDto targetCurrency;
-    private double rate;
+    private BigDecimal rate;
 
-    public ExchangeRateResponseDto(int id, CurrencyResponseDto baseCurrency, CurrencyResponseDto targetCurrency, double rate) {
+    public ExchangeRateResponseDto(int id, CurrencyResponseDto baseCurrency, CurrencyResponseDto targetCurrency, BigDecimal rate) {
         this.id = id;
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
@@ -18,15 +20,31 @@ public class ExchangeRateResponseDto {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public CurrencyResponseDto getBaseCurrency() {
         return baseCurrency;
+    }
+
+    public void setBaseCurrency(CurrencyResponseDto baseCurrency) {
+        this.baseCurrency = baseCurrency;
     }
 
     public CurrencyResponseDto getTargetCurrency() {
         return targetCurrency;
     }
 
-    public double getRate() {
+    public void setTargetCurrency(CurrencyResponseDto targetCurrency) {
+        this.targetCurrency = targetCurrency;
+    }
+
+    public BigDecimal getRate() {
         return rate;
+    }
+
+    public void setRate(BigDecimal rate) {
+        this.rate = rate;
     }
 }

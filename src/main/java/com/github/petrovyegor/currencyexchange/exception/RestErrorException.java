@@ -1,10 +1,10 @@
 package com.github.petrovyegor.currencyexchange.exception;
 
-public class RestErrorException extends RuntimeException{
+public class RestErrorException extends RuntimeException {
     private int code;
     private String message;
 
-    public RestErrorException(int code, String message){
+    public RestErrorException(int code, String message) {
         this.code = code;
         this.message = message;
     }
