@@ -17,6 +17,7 @@ public class ExchangeService {
     private final static BigDecimal RATE_CALCULATION_DIVIDENT = new BigDecimal(1);
     ExchangeRateService exchangeRateService = new ExchangeRateService();
     private final static int DIVISION_PRECISION = 2;
+    private static final int BIGDECIMAL_PRECISION = 2;
 
     public ExchangeResponseDto convert(ExchangeRequestDto exchangeRequestDto) {
         String baseCode = exchangeRequestDto.getBaseCurrencyCode();
@@ -48,7 +49,6 @@ public class ExchangeService {
         CurrencyResponseDto baseCurrency = exchangeRate.getBaseCurrency();
         CurrencyResponseDto targetCurrency = exchangeRate.getTargetCurrency();
         BigDecimal rate = RATE_CALCULATION_DIVIDENT.divide(exchangeRate.getRate(),DIVISION_PRECISION, RoundingMode.HALF_UP);
-        rate = roundRate(rate);
         BigDecimal convertedAmount = amount.multiply(rate);
         return new ExchangeResponseDto(targetCurrency, baseCurrency, rate, amount, convertedAmount);
     }
@@ -56,19 +56,13 @@ public class ExchangeService {
     private ExchangeResponseDto doCrossConversion(String baseCode, String targetCode, BigDecimal amount) {
         ExchangeRateResponseDto sourcexchangeRate = exchangeRateService.findByCurrencyCodes(CROSS_CURRENCY_CODE, baseCode);
         ExchangeRateResponseDto targetExchangeRate = exchangeRateService.findByCurrencyCodes(CROSS_CURRENCY_CODE, targetCode);
-        BigDecimal rate = RATE_CALCULATION_DIVIDENT.divide(sourcexchangeRate.getRate().multiply(targetExchangeRate.getRate()));
-        rate = roundRate(rate);
+        BigDecimal rate = RATE_CALCULATION_DIVIDENT.divide(sourcexchangeRate.getRate().multiply(targetExchangeRate.getRate()), BIGDECIMAL_PRECISION,  RoundingMode.HALF_UP);
         BigDecimal convertedAmount = amount.multiply(rate);
 
         CurrencyResponseDto baseCurrency = sourcexchangeRate.getTargetCurrency();
         CurrencyResponseDto targetCurrency = targetExchangeRate.getTargetCurrency();
 
         return new ExchangeResponseDto(baseCurrency, targetCurrency, rate, amount, convertedAmount);
-    }
-
-    private BigDecimal roundRate(BigDecimal rate) {
-        rate.setScale(ROUND_PRECISION, RoundingMode.HALF_UP);
-        return rate;
     }
 
     private BigDecimal roundAmount(BigDecimal amount) {

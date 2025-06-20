@@ -5,6 +5,7 @@ import com.github.petrovyegor.currencyexchange.model.ExchangeRate;
 import com.github.petrovyegor.currencyexchange.util.DataSource;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 
 public final class ExchangeRateDao {
+    private static final int BIGDECIMAL_PRECISION = 2;
     private static final String FIND_ALL_QUERY = "SELECT id, basecurrencyid, targetcurrencyid, rate FROM ExchangeRates";
     private static final String FIND_BY_CURRENCY_CODES = """
             SELECT er.id, er.basecurrencyid, er.targetcurrencyid, er.rate
@@ -33,7 +35,7 @@ public final class ExchangeRateDao {
                 int id = resultSet.getInt("id");
                 int baseCurrencyId = resultSet.getInt("basecurrencyid");
                 int targetCurrencyId = resultSet.getInt("targetcurrencyid");
-                BigDecimal rate = new BigDecimal("rate");
+                BigDecimal rate = new BigDecimal(resultSet.getDouble("rate")).setScale(BIGDECIMAL_PRECISION, RoundingMode.HALF_UP);
                 result.add(new ExchangeRate(id, baseCurrencyId, targetCurrencyId, rate));
             }
             return result;
@@ -55,7 +57,7 @@ public final class ExchangeRateDao {
                 int id = resultSet.getInt("id");
                 int baseCurrencyId = resultSet.getInt("basecurrencyid");
                 int targetCurrencyId = resultSet.getInt("targetcurrencyid");
-                BigDecimal rate = new BigDecimal("rate");
+                BigDecimal rate = new BigDecimal(resultSet.getDouble("rate")).setScale(BIGDECIMAL_PRECISION, RoundingMode.HALF_UP);
                 exchangeRate = new ExchangeRate(id, baseCurrencyId, targetCurrencyId, rate);
             }
             return Optional.ofNullable(exchangeRate);
