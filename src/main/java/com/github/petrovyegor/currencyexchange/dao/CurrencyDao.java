@@ -12,7 +12,7 @@ import java.util.Optional;
 import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 
 public final class CurrencyDao {
-    private static final String FIND_ALL_QUERY = "SELECT Id, Code, FullName, Sign FROM Currencies";
+    private static final String FIND_ALL = "SELECT Id, Code, FullName, Sign FROM Currencies";
     private static final String FIND_BY_CODE = "SELECT Id, Code, FullName, Sign FROM Currencies WHERE Code = ?";
     private static final String FIND_BY_ID = "SELECT Id, Code, FullName, Sign FROM Currencies WHERE id = ?";
     private static final String INSERT_CURRENCY = "INSERT INTO Currencies (Code, FullName, Sign) VALUES (?, ?, ?)";
@@ -44,7 +44,7 @@ public final class CurrencyDao {
         List<Currency> result = new ArrayList<>();
         try (Connection co = DataSource.getConnection();
              Statement statement = co.createStatement();
-             ResultSet resultSet = statement.executeQuery(FIND_ALL_QUERY)) {
+             ResultSet resultSet = statement.executeQuery(FIND_ALL)) {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String code = resultSet.getString("code");

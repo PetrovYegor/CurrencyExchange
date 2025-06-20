@@ -15,7 +15,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 
 public final class ExchangeRateDao {
     private static final int BIGDECIMAL_PRECISION = 2;
-    private static final String FIND_ALL_QUERY = "SELECT id, basecurrencyid, targetcurrencyid, rate FROM ExchangeRates";
+    private static final String FIND_ALL = "SELECT id, basecurrencyid, targetcurrencyid, rate FROM ExchangeRates";
     private static final String FIND_BY_CURRENCY_CODES = """
             SELECT er.id, er.basecurrencyid, er.targetcurrencyid, er.rate
             FROM ExchangeRates er
@@ -30,7 +30,7 @@ public final class ExchangeRateDao {
         List<ExchangeRate> result = new ArrayList<>();
         try (Connection co = DataSource.getConnection();
              Statement statement = co.createStatement();
-             ResultSet resultSet = statement.executeQuery(FIND_ALL_QUERY)) {
+             ResultSet resultSet = statement.executeQuery(FIND_ALL)) {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 int baseCurrencyId = resultSet.getInt("basecurrencyid");
