@@ -29,7 +29,11 @@ public class ExchangeRateController extends BaseController {
     }
 
     protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String pair = request.getPathInfo().replaceFirst("/", "").toUpperCase();
+        String path = request.getPathInfo();
+        if (path == null){
+            throw new RestErrorException(SC_BAD_REQUEST, "Unsupported URL given. Missing slash and currency code");
+        }
+        String pair = path.replaceFirst("/", "").toUpperCase();
         if (!isPairOfCodesValid(pair)) {
             throw new InvalidParamException(SC_BAD_REQUEST, "Pair of currency codes parameter is not valid");
         }
@@ -70,7 +74,11 @@ public class ExchangeRateController extends BaseController {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String pair = request.getPathInfo().replaceFirst("/", "").toUpperCase();
+        String path = request.getPathInfo();
+        if (path == null){
+            throw new RestErrorException(SC_BAD_REQUEST, "Unsupported URL given. Missing slash and currency code");
+        }
+        String pair = path.replaceFirst("/", "").toUpperCase();
         if (!isPairOfCodesValid(pair)) {
             throw new InvalidParamException(SC_BAD_REQUEST, "Pair of currency codes parameter is not valid");
         }

@@ -2,6 +2,7 @@ package com.github.petrovyegor.currencyexchange.controller;
 
 import com.github.petrovyegor.currencyexchange.dto.CurrencyResponseDto;
 import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
+import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -14,7 +15,11 @@ public class CurrencyController extends BaseController {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String code = request.getPathInfo().replaceFirst("/", "").toUpperCase();
+        String path = request.getPathInfo();
+        if (path == null){
+            throw new RestErrorException(SC_BAD_REQUEST, "Unsupported URL given. Missing slash and currency code");
+        }
+        String code = path.replaceFirst("/", "").toUpperCase();
         if (!isCodeValid(code)) {
             throw new InvalidParamException(SC_BAD_REQUEST, "Code parameter is not valid");
         }
