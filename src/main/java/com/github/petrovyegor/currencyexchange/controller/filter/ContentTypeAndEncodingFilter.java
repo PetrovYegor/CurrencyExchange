@@ -4,7 +4,7 @@ import jakarta.servlet.*;
 
 import java.io.IOException;
 
-public class EncodingFilter implements Filter {
+public class ContentTypeAndEncodingFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) {
     }

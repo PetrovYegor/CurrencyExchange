@@ -4,21 +4,40 @@
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
     <filter>
-        <filter-name>EncodingFilter</filter-name>
-        <filter-class>com.github.petrovyegor.currencyexchange.controller.filter.EncodingFilter</filter-class>
+        <filter-name>ContentTypeAndEncodingFilter</filter-name>
+        <filter-class>com.github.petrovyegor.currencyexchange.controller.filter.ContentTypeAndEncodingFilter</filter-class>
     </filter>
     <filter>
         <filter-name>ErrorHandlerFilter</filter-name>
         <filter-class>com.github.petrovyegor.currencyexchange.controller.filter.ErrorHandlerFilter</filter-class>
     </filter>
+
     <filter-mapping>
-        <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <filter-name>ContentTypeAndEncodingFilter</filter-name>
+        <url-pattern>/currency/*</url-pattern>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>ContentTypeAndEncodingFilter</filter-name>
+        <url-pattern>/currencies</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ContentTypeAndEncodingFilter</filter-name>
+        <url-pattern>/exchangeRate/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ContentTypeAndEncodingFilter</filter-name>
+        <url-pattern>/exchangeRates</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ContentTypeAndEncodingFilter</filter-name>
+        <url-pattern>/exchange</url-pattern>
+    </filter-mapping>
+
     <filter-mapping>
         <filter-name>ErrorHandlerFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <servlet>
         <servlet-name>CurrencyController</servlet-name>
         <servlet-class>com.github.petrovyegor.currencyexchange.controller.CurrencyController</servlet-class>
@@ -39,6 +58,7 @@
         <servlet-name>ExchangeController</servlet-name>
         <servlet-class>com.github.petrovyegor.currencyexchange.controller.ExchangeController</servlet-class>
     </servlet>
+
     <servlet-mapping>
         <servlet-name>CurrenciesController</servlet-name>
         <url-pattern>/currencies</url-pattern>
