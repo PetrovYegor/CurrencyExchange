@@ -1,12 +1,12 @@
 package com.github.petrovyegor.currencyexchange.util;
 
 import java.math.BigDecimal;
-
+//Код валюты не может быть пустым, должен содержать 3 латинские буквы, наименование валюты должно содержать латинские буквы и знаки табуляции, минимальная длина 1 знак, максималньная 50 знаков. Знак валюты - латинские буквы и пробелы, длина от 1 до 10ти символов
 public class RequestParametersValidator {
     private static final String CURRENCY_CODE_PATTERN = "[a-zA-Z]{3}";
     private static final String PAIR_CURRENCY_CODES_PATTERN = "[a-zA-Z]{6}";
-    private static final String CURRENCY_NAME_PATTERN = "[a-zA-Z]{1,50}";
-    private static final String CURRENCY_SIGN_PATTERN = "[a-zA-Z]{1,10}";
+    private static final String CURRENCY_NAME_PATTERN = "[a-zA-Z ]{1,50}";
+    private static final String CURRENCY_SIGN_PATTERN = "[a-zA-Z ]{1,10}";
     private static final BigDecimal MIN_RATE_VALUE = new BigDecimal(0);
     private static final BigDecimal MAX_RATE_VALUE = new BigDecimal(1000);
     private static final BigDecimal MIN_AMOUNT_VALUE = new BigDecimal(0);
