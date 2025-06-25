@@ -1,6 +1,10 @@
 package com.github.petrovyegor.currencyexchange.util;
 
+import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
+
 import java.math.BigDecimal;
+
+import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 public class RequestParametersValidator {
     private static final String CURRENCY_CODE_PATTERN = "[a-zA-Z]{3}";
@@ -10,6 +14,11 @@ public class RequestParametersValidator {
     private static final BigDecimal MIN_RATE_VALUE = new BigDecimal(0);
     private static final BigDecimal MAX_RATE_VALUE = new BigDecimal(1000);
     private static final BigDecimal MIN_AMOUNT_VALUE = new BigDecimal(0);
+
+    private static String INVALID_CURRENCY_CODE_MESSAGE = "The currency code cannot be empty, must contain 3 Latin letters";
+    private static String INVALID_CURRENCY_NAME_MESSAGE = "The currency name cannot be empty, must contain only Latin letters and spaces, length from 1 to 50 characters";
+    private static String INVALID_CURRENCY_SIGN_MESSAGE = "The currency sign cannot be empty, must contain only Latin letters and spaces, length from 1 to 10 characters";
+
 
     public static boolean isCodeValid(String code) {
         return code.matches(CURRENCY_CODE_PATTERN);
@@ -27,8 +36,16 @@ public class RequestParametersValidator {
         return sign.matches(CURRENCY_SIGN_PATTERN);
     }
 
-    public static boolean isCurrencyGetParametersValid(String code, String name, String sign) {
-        return isCodeValid(code) && isNameValid(name) && isSignValid(sign);
+    public static void validateCurrenciesPostParameters(String code, String name, String sign){
+        if (!isCodeValid(code)){
+            throw new InvalidParamException(SC_BAD_REQUEST, INVALID_CURRENCY_CODE_MESSAGE);
+        }
+        if (!isNameValid(name)){
+            throw new InvalidParamException(SC_BAD_REQUEST, INVALID_CURRENCY_NAME_MESSAGE);
+        }
+        if (!isSignValid(sign)){
+            throw new InvalidParamException(SC_BAD_REQUEST, INVALID_CURRENCY_SIGN_MESSAGE);
+        }
     }
 
     public static boolean isRateValid(BigDecimal rate) {

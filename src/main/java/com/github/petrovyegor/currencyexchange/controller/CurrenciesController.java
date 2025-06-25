@@ -2,7 +2,6 @@ package com.github.petrovyegor.currencyexchange.controller;
 
 import com.github.petrovyegor.currencyexchange.dto.CurrencyRequestDto;
 import com.github.petrovyegor.currencyexchange.dto.CurrencyResponseDto;
-import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
 import com.github.petrovyegor.currencyexchange.exception.InvalidRequestException;
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +11,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import static com.github.petrovyegor.currencyexchange.util.RequestParametersValidator.isCurrencyGetParametersValid;
+import static com.github.petrovyegor.currencyexchange.util.RequestParametersValidator.validateCurrenciesPostParameters;
 import static jakarta.servlet.http.HttpServletResponse.*;
 
 public class CurrenciesController extends BaseController {
@@ -31,9 +30,7 @@ public class CurrenciesController extends BaseController {
         String name = request.getParameter("name");
         String sign = request.getParameter("sign");
 
-        if (!isCurrencyGetParametersValid(code, name, sign)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, "One or more of the parameters are invalid");
-        }
+        validateCurrenciesPostParameters(code, name, sign);
 
         boolean isCurrencyExists = currencyService.isCurrencyExists(code);
         if (isCurrencyExists) {
@@ -50,4 +47,6 @@ public class CurrenciesController extends BaseController {
         Set<String> requiredParameters = Set.of("code", "name", "sign");
         return parameters.keySet().containsAll(requiredParameters);
     }
+
+
 }
