@@ -48,9 +48,9 @@ public final class CurrencyDao {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String code = resultSet.getString("code");
-                String fullName = resultSet.getString("fullname");
+                String name = resultSet.getString("fullname");
                 String sign = resultSet.getString("sign");
-                result.add(new Currency(id, code, fullName, sign));
+                result.add(new Currency(id, code, name, sign));
             }
             return result;
         } catch (SQLException e) {
@@ -62,7 +62,7 @@ public final class CurrencyDao {
         try (Connection co = DataSource.getConnection();
              PreparedStatement statement = co.prepareStatement(INSERT_CURRENCY)) {
             statement.setString(1, currency.getCode());
-            statement.setString(2, currency.getFullName());
+            statement.setString(2, currency.getName());
             statement.setString(3, currency.getSign());
             statement.executeUpdate();
             ResultSet resultSet = statement.getGeneratedKeys();
@@ -70,7 +70,7 @@ public final class CurrencyDao {
             currency.setId(resultSet.getInt(1));
             return currency;
         } catch (SQLException e) {
-            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format("Failed to save currency with code '%s', fullname '%s', sign '%s'", currency.getCode(), currency.getFullName(), currency.getSign()));
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format("Failed to save currency with code '%s', fullname '%s', sign '%s'", currency.getCode(), currency.getName(), currency.getSign()));
         }
     }
 

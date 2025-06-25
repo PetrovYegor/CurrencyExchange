@@ -34,11 +34,11 @@ public class CurrencyService {
     }
 
     public CurrencyResponseDto toDTO(Currency currency) {
-        return new CurrencyResponseDto(currency.getId(), currency.getCode(), currency.getFullName(), currency.getSign());
+        return new CurrencyResponseDto(currency.getId(), currency.getCode(), currency.getName(), currency.getSign());
     }
 
     private Currency toCurrency(CurrencyRequestDto source) {
-        return new Currency(source.getCode(), source.getFullName(), source.getSign());
+        return new Currency(source.getCode(), source.getName(), source.getSign());
     }
 
     public boolean isCurrencyExists(String code) {

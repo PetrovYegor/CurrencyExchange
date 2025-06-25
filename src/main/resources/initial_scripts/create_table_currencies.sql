@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS Currencies (
-                                          Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                          Code VARCHAR(3) NOT NULL,
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Code VARCHAR(3) NOT NULL,
     FullName VARCHAR(50) NOT NULL,
     Sign VARCHAR(10) NOT NULL
     );
