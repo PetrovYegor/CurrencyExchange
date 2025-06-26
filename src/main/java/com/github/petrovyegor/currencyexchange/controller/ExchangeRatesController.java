@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
-import static com.github.petrovyegor.currencyexchange.util.RequestParametersValidator.isExchangeRatePostParametersValid;
+import static com.github.petrovyegor.currencyexchange.util.RequestAndParametersValidator.isExchangeRatePostParametersValid;
 import static jakarta.servlet.http.HttpServletResponse.*;
 
 public class ExchangeRatesController extends BaseController {

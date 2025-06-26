@@ -1,10 +1,7 @@
 package com.github.petrovyegor.currencyexchange.controller.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.petrovyegor.currencyexchange.exception.DBException;
-import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
-import com.github.petrovyegor.currencyexchange.exception.InvalidRequestException;
-import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
+import com.github.petrovyegor.currencyexchange.exception.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -24,6 +21,8 @@ public class ErrorHandlerFilter implements Filter {
             sendError(e.getCode(), e.getMessage(), response);
         } catch (InvalidRequestException e) {
             sendError(e.getCode(), e.getMessage(), response);
+        } catch (CurrencyAlreadyExistsException e) {
+            sendError(e.getCode(), e.getMessage(), response);
         } catch (RestErrorException e) {
             sendError(e.getCode(), e.getMessage(), response);
         } catch (DBException e) {
@@ -32,6 +31,8 @@ public class ErrorHandlerFilter implements Filter {
             sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Fatal error", response);
         }
     }
+
+
 
     private void sendError(int code, String message, HttpServletResponse response) {
         ObjectMapper objectMapper = new ObjectMapper();

@@ -2,19 +2,19 @@ package com.github.petrovyegor.currencyexchange.controller;
 
 import com.github.petrovyegor.currencyexchange.dto.CurrencyRequestDto;
 import com.github.petrovyegor.currencyexchange.dto.CurrencyResponseDto;
-import com.github.petrovyegor.currencyexchange.exception.InvalidRequestException;
-import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
+import com.github.petrovyegor.currencyexchange.exception.CurrencyAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
 
-import static com.github.petrovyegor.currencyexchange.util.RequestParametersValidator.validateCurrenciesPostParameters;
-import static jakarta.servlet.http.HttpServletResponse.*;
+import static com.github.petrovyegor.currencyexchange.util.RequestAndParametersValidator.validateCurrenciesPostParameters;
+import static com.github.petrovyegor.currencyexchange.util.RequestAndParametersValidator.validateCurrenciesPostRequest;
+import static jakarta.servlet.http.HttpServletResponse.SC_CONFLICT;
+import static jakarta.servlet.http.HttpServletResponse.SC_CREATED;
 
 public class CurrenciesController extends BaseController {
+    private static String CURRENCY_ALREADY_EXISTS_MESSAGE = "Currency with code '%s' already exists!";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -23,9 +23,8 @@ public class CurrenciesController extends BaseController {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (!isPostRequestValid(request)) {
-            throw new InvalidRequestException(SC_BAD_REQUEST, "One or more http request parameters are missing");
-        }
+        validateCurrenciesPostRequest(request);
+
         String code = request.getParameter("code").toUpperCase();
         String name = request.getParameter("name");
         String sign = request.getParameter("sign");
@@ -34,19 +33,11 @@ public class CurrenciesController extends BaseController {
 
         boolean isCurrencyExists = currencyService.isCurrencyExists(code);
         if (isCurrencyExists) {
-            throw new RestErrorException(SC_CONFLICT, "Currency already exists!");
+            throw new CurrencyAlreadyExistsException(SC_CONFLICT, CURRENCY_ALREADY_EXISTS_MESSAGE.formatted(code));
         }
         CurrencyRequestDto currencyRequestDto = new CurrencyRequestDto(code, name, sign);
         CurrencyResponseDto createdCurrency = currencyService.createCurrency(currencyRequestDto);
         response.setStatus(SC_CREATED);
         objectMapper.writeValue(response.getWriter(), createdCurrency);
     }
-
-    private boolean isPostRequestValid(HttpServletRequest request) {
-        Map<String, String[]> parameters = request.getParameterMap();
-        Set<String> requiredParameters = Set.of("code", "name", "sign");
-        return parameters.keySet().containsAll(requiredParameters);
-    }
-
-
 }

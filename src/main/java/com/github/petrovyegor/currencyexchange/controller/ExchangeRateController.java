@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
-import static com.github.petrovyegor.currencyexchange.util.RequestParametersValidator.isPairOfCodesValid;
-import static com.github.petrovyegor.currencyexchange.util.RequestParametersValidator.isRateValid;
+import static com.github.petrovyegor.currencyexchange.util.RequestAndParametersValidator.isPairOfCodesValid;
+import static com.github.petrovyegor.currencyexchange.util.RequestAndParametersValidator.isRateValid;
 import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 public class ExchangeRateController extends BaseController {
