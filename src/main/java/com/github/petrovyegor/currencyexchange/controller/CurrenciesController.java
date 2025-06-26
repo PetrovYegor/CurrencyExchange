@@ -30,14 +30,17 @@ public class CurrenciesController extends BaseController {
         String sign = request.getParameter("sign");
 
         validateCurrenciesPostParameters(code, name, sign);
-
-        boolean isCurrencyExists = currencyService.isCurrencyExists(code);
-        if (isCurrencyExists) {
-            throw new CurrencyAlreadyExistsException(SC_CONFLICT, CURRENCY_ALREADY_EXISTS_MESSAGE.formatted(code));
-        }
+        ensureCurrencyDoesNotExist(code);
         CurrencyRequestDto currencyRequestDto = new CurrencyRequestDto(code, name, sign);
         CurrencyResponseDto createdCurrency = currencyService.createCurrency(currencyRequestDto);
         response.setStatus(SC_CREATED);
         objectMapper.writeValue(response.getWriter(), createdCurrency);
+    }
+
+    private void ensureCurrencyDoesNotExist(String code) {
+        if (currencyService.isCurrencyExists(code)) {
+            throw new CurrencyAlreadyExistsException(SC_CONFLICT, CURRENCY_ALREADY_EXISTS_MESSAGE.formatted(code)
+            );
+        }
     }
 }

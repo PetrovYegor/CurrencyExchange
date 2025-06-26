@@ -2,21 +2,21 @@ package com.github.petrovyegor.currencyexchange.controller;
 
 import com.github.petrovyegor.currencyexchange.dto.ExchangeRateRequestDto;
 import com.github.petrovyegor.currencyexchange.dto.ExchangeRateResponseDto;
+import com.github.petrovyegor.currencyexchange.exception.ExchangeRateAlreadyExistsException;
 import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
-import com.github.petrovyegor.currencyexchange.exception.InvalidRequestException;
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Map;
-import java.util.Set;
 
-import static com.github.petrovyegor.currencyexchange.util.RequestAndParametersValidator.isExchangeRatePostParametersValid;
+import static com.github.petrovyegor.currencyexchange.util.RequestAndParametersValidator.*;
 import static jakarta.servlet.http.HttpServletResponse.*;
 
 public class ExchangeRatesController extends BaseController {
+    private static String CURRENCY_NOT_FOUND_MESSAGE = "Currency with code '%s' does not exist!";
+    private static String EXCHANGE_RATE_ALREADY_EXISTS_MESSAGE = "Exchange rate with base currency code '%s' and target currency code '%s' already exists!";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -25,31 +25,16 @@ public class ExchangeRatesController extends BaseController {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (!isPostRequestValid(request)) {
-            throw new InvalidRequestException(SC_BAD_REQUEST, "One or more http request parameters are missing");
-        }
+        validateExchangeRatesPostRequest(request);
+
         String baseCode = request.getParameter("baseCurrencyCode").toUpperCase();
         String targetCode = request.getParameter("targetCurrencyCode").toUpperCase();
-        BigDecimal rate;
-        try {
-            rate = new BigDecimal(request.getParameter("rate"));
-        } catch (NumberFormatException e) {
-            throw new InvalidParamException(SC_BAD_REQUEST, "An incorrect value was entered for the rate parameter");
-        }
+        BigDecimal rate = getRateFromRequest(request);
 
-        if (!isExchangeRatePostParametersValid(baseCode, targetCode, rate)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, "One or more of the parameters are invalid");
-        }
+        validateExchangeRatesPostParameters(baseCode, targetCode, rate);
+        ensureCurrenciesExists(baseCode, targetCode);
 
-        boolean areCurrenciesExists = currencyService.isCurrencyExists(baseCode) && currencyService.isCurrencyExists(targetCode);
-        if (!areCurrenciesExists) {
-            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no currency with base or target currency code");
-        }
-
-        boolean isExchangeRateExists = exchangeRateService.isExchangeRateExists(baseCode, targetCode);
-        if (isExchangeRateExists) {
-            throw new RestErrorException(SC_CONFLICT, "Exchange rate already exists with such pair of currency codes");
-        }
+        ensureExchangeRateDoesNotExist(baseCode, targetCode);
 
         ExchangeRateRequestDto exchangeRateRequestDto = new ExchangeRateRequestDto(baseCode, targetCode, rate);
         ExchangeRateResponseDto createdExchangeRate = exchangeRateService.createExchangeRate(exchangeRateRequestDto);
@@ -57,9 +42,26 @@ public class ExchangeRatesController extends BaseController {
         objectMapper.writeValue(response.getWriter(), createdExchangeRate);
     }
 
-    private boolean isPostRequestValid(HttpServletRequest request) {
-        Map<String, String[]> parameters = request.getParameterMap();
-        Set<String> requiredParameters = Set.of("baseCurrencyCode", "targetCurrencyCode", "rate");
-        return parameters.keySet().containsAll(requiredParameters);
+    private BigDecimal getRateFromRequest(HttpServletRequest request) {
+        try {
+            return new BigDecimal(request.getParameter("rate"));
+        } catch (NumberFormatException e) {
+            throw new InvalidParamException(SC_BAD_REQUEST, INVALID_RATE_MESSAGE);
+        }
+    }
+
+    private void ensureCurrenciesExists(String baseCode, String targetCode) {
+        if (!currencyService.isCurrencyExists(baseCode)) {
+            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, CURRENCY_NOT_FOUND_MESSAGE.formatted(baseCode));
+        }
+        if (!currencyService.isCurrencyExists(targetCode)) {
+            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, CURRENCY_NOT_FOUND_MESSAGE.formatted(targetCode));
+        }
+    }
+
+    private void ensureExchangeRateDoesNotExist(String baseCode, String targetCode) {
+        if (exchangeRateService.isExchangeRateExists(baseCode, targetCode)) {
+            throw new ExchangeRateAlreadyExistsException(SC_CONFLICT, EXCHANGE_RATE_ALREADY_EXISTS_MESSAGE.formatted(baseCode, targetCode));
+        }
     }
 }
