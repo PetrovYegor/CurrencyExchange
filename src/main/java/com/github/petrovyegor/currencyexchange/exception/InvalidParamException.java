@@ -1,6 +1,6 @@
 package com.github.petrovyegor.currencyexchange.exception;
 
-public class InvalidParamException extends RuntimeException {
+public final class InvalidParamException extends RuntimeException {
     private int code;
     private String message;
 

@@ -16,6 +16,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 public class ExchangeRateController extends BaseController {
     private static final String RATE_FORMAT = "^\\d+(\\.\\d{1,6})?$";
     private static final String CURRENCY_NOT_FOUND_MESSAGE = "Currency with code '%s' does not exist!";
+    private static final String INVALID_RATE_FORMAT_MESSAGE = "Rate must be a positive number with up to 6 decimal places";
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -79,7 +80,7 @@ public class ExchangeRateController extends BaseController {
 
     private void validateRateFormat(String rate) {
         if (rate == null || !rate.matches(RATE_FORMAT)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, "Rate must be a positive number with up to 6 decimal places");
+            throw new InvalidParamException(SC_BAD_REQUEST, INVALID_RATE_FORMAT_MESSAGE);
         }
     }
 }

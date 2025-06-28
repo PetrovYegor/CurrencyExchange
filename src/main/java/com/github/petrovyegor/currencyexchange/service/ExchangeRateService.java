@@ -9,7 +9,6 @@ import com.github.petrovyegor.currencyexchange.model.ExchangeRate;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 

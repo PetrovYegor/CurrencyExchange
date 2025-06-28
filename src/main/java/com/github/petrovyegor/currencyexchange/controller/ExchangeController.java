@@ -16,7 +16,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 public class ExchangeController extends BaseController {
     private static final String INVALID_AMOUNT_MESSAGE = "The amount cannot be empty, must contain only digits";
-    private static String CURRENCY_NOT_FOUND_MESSAGE = "Currency with code '%s' does not exist!";
+    private static final String CURRENCY_NOT_FOUND_MESSAGE = "Currency with code '%s' does not exist!";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

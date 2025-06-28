@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class ErrorHandlerFilter implements Filter {
+    private static final String FATAL_ERROR_MESSAGE = "Fatal error";
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
@@ -28,11 +30,9 @@ public class ErrorHandlerFilter implements Filter {
         } catch (DBException e) {
             sendError(e.getCode(), e.getMessage(), response);
         } catch (Exception e) {
-            sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Fatal error", response);
+            sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, FATAL_ERROR_MESSAGE, response);
         }
     }
-
-
 
     private void sendError(int code, String message, HttpServletResponse response) {
         ObjectMapper objectMapper = new ObjectMapper();

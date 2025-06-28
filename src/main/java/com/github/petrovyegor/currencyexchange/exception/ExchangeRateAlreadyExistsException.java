@@ -1,6 +1,6 @@
 package com.github.petrovyegor.currencyexchange.exception;
 
-public class ExchangeRateAlreadyExistsException extends RuntimeException {
+public final class ExchangeRateAlreadyExistsException extends RuntimeException {
     private int code;
     private String message;
 

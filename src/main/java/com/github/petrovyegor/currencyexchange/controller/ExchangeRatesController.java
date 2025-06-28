@@ -11,12 +11,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import static com.github.petrovyegor.currencyexchange.util.RequestAndParametersValidator.*;
+import static com.github.petrovyegor.currencyexchange.util.RequestAndParametersValidator.validateExchangeRatesPostParameters;
+import static com.github.petrovyegor.currencyexchange.util.RequestAndParametersValidator.validateExchangeRatesPostRequest;
 import static jakarta.servlet.http.HttpServletResponse.*;
 
 public class ExchangeRatesController extends BaseController {
-    private static String CURRENCY_NOT_FOUND_MESSAGE = "Currency with code '%s' does not exist!";
-    private static String EXCHANGE_RATE_ALREADY_EXISTS_MESSAGE = "Exchange rate with base currency code '%s' and target currency code '%s' already exists!";
+    private static final String CURRENCY_NOT_FOUND_MESSAGE = "Currency with code '%s' does not exist!";
+    private static final String EXCHANGE_RATE_ALREADY_EXISTS_MESSAGE = "Exchange rate with base currency code '%s' and target currency code '%s' already exists!";
+    private static final String EQUALS_CODES_MESSAGE = "Currency codes should not be equals";
+    private static final String INVALID_RATE_FORMAT_MESSAGE = "Rate must be a positive number with up to 6 decimal places";
     private static final String RATE_FORMAT = "^\\d+(\\.\\d{1,6})?$";
 
     @Override
@@ -30,6 +33,8 @@ public class ExchangeRatesController extends BaseController {
 
         String baseCode = request.getParameter("baseCurrencyCode").toUpperCase();
         String targetCode = request.getParameter("targetCurrencyCode").toUpperCase();
+        ensureCodesNotEquals(baseCode, targetCode);
+
         String rateParam = request.getParameter("rate");
         validateRateFormat(rateParam);
 
@@ -63,7 +68,13 @@ public class ExchangeRatesController extends BaseController {
 
     private void validateRateFormat(String rate) {
         if (rate == null || !rate.matches(RATE_FORMAT)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, "Rate must be a positive number with up to 6 decimal places");
+            throw new InvalidParamException(SC_BAD_REQUEST, INVALID_RATE_FORMAT_MESSAGE);
+        }
+    }
+
+    private void ensureCodesNotEquals(String baseCode, String targetCode) {
+        if (baseCode.equals(targetCode)) {
+            throw new InvalidParamException(SC_BAD_REQUEST, EQUALS_CODES_MESSAGE);
         }
     }
 }

@@ -14,7 +14,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_CONFLICT;
 import static jakarta.servlet.http.HttpServletResponse.SC_CREATED;
 
 public class CurrenciesController extends BaseController {
-    private static String CURRENCY_ALREADY_EXISTS_MESSAGE = "Currency with code '%s' already exists!";
+    private static final String CURRENCY_ALREADY_EXISTS_MESSAGE = "Currency with code '%s' already exists!";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

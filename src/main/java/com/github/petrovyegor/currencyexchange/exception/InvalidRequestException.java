@@ -1,6 +1,6 @@
 package com.github.petrovyegor.currencyexchange.exception;
 
-public class InvalidRequestException extends RuntimeException {
+public final class InvalidRequestException extends RuntimeException {
     private int code;
     private String message;
 
