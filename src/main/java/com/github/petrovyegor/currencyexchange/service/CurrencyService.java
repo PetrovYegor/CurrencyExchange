@@ -12,6 +12,8 @@ import java.util.List;
 
 public class CurrencyService {
     private final CurrencyDao currencyDao = new CurrencyDao();
+    private static String CURRENCY_NOT_FOUND_BY_CODE_MESSAGE = "Currency with code '%s' does not exist!";
+    private static String CURRENCY_NOT_FOUND_BY_ID_MESSAGE = "Currency with id '%s' does not exist!";
 
     public CurrencyResponseDto createCurrency(CurrencyRequestDto currencyRequestDto) {
         Currency currency = currencyDao.save(toCurrency(currencyRequestDto));
@@ -29,7 +31,7 @@ public class CurrencyService {
 
     public CurrencyResponseDto findByCode(String code) {
         Currency currency = currencyDao.findByCode(code)
-                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no currency with this code"));
+                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, CURRENCY_NOT_FOUND_BY_CODE_MESSAGE.formatted(code)));
         return toDTO(currency);
     }
 
@@ -47,7 +49,7 @@ public class CurrencyService {
 
     public CurrencyResponseDto findById(int id) {
         Currency currency = currencyDao.findById(id)
-                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no currency with this id"));
+                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, CURRENCY_NOT_FOUND_BY_ID_MESSAGE.formatted(id)));
         return toDTO(currency);
     }
 }

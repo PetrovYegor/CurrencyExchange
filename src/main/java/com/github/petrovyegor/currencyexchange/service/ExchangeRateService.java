@@ -16,6 +16,7 @@ import java.util.List;
 public class ExchangeRateService {
     private final ExchangeRateDao exchangeRateDao = new ExchangeRateDao();
     private final CurrencyService currencyService = new CurrencyService();
+    private static final String EXCHANGE_RATE_DOES_NOT_EXIST_MESSAGE = "Exchange rate with base currency code '%s' and target currency code '%s' does not exist!";
 
     public List<ExchangeRateResponseDto> findAll() {
         List<ExchangeRateResponseDto> result = new ArrayList<>();
@@ -34,7 +35,7 @@ public class ExchangeRateService {
 
     public ExchangeRateResponseDto findByCurrencyCodes(String baseCode, String targetCode) {
         ExchangeRate exchangeRate = exchangeRateDao.findByCurrencyCodes(baseCode, targetCode)
-                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no exchange rate with this pair of currency codes"));
+                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, EXCHANGE_RATE_DOES_NOT_EXIST_MESSAGE.formatted(baseCode, targetCode)));
         return toDto(exchangeRate);
     }
 
@@ -43,15 +44,11 @@ public class ExchangeRateService {
     }
 
     public ExchangeRateResponseDto createExchangeRate(ExchangeRateRequestDto exchangeRateRequestDto) {
-        BigDecimal currentRate = exchangeRateRequestDto.getRate();
-        exchangeRateRequestDto.setRate(roundRate(currentRate));
         ExchangeRate exchangeRate = exchangeRateDao.save(toExchangeRate(exchangeRateRequestDto));
         return toDto(exchangeRate);
     }
 
     public ExchangeRateResponseDto updateRate(ExchangeRateRequestDto exchangeRateRequestDto) {
-        BigDecimal currentRate = exchangeRateRequestDto.getRate();
-        exchangeRateRequestDto.setRate(roundRate(currentRate));
         return toDto(exchangeRateDao.updateRate(toExchangeRate(exchangeRateRequestDto)));
     }
 
@@ -68,11 +65,6 @@ public class ExchangeRateService {
 
     private boolean isExchangeRateNew(ExchangeRateRequestDto source) {
         return source.getId() == 0;
-    }
-
-    private BigDecimal roundRate(BigDecimal rate) {
-        rate.setScale(6, RoundingMode.HALF_UP);
-        return rate;
     }
 }
 

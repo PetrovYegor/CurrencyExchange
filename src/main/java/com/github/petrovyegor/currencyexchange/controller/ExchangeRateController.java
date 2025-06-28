@@ -3,20 +3,19 @@ package com.github.petrovyegor.currencyexchange.controller;
 import com.github.petrovyegor.currencyexchange.dto.ExchangeRateRequestDto;
 import com.github.petrovyegor.currencyexchange.dto.ExchangeRateResponseDto;
 import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
-import com.github.petrovyegor.currencyexchange.exception.InvalidRequestException;
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.stream.Collectors;
 
-import static com.github.petrovyegor.currencyexchange.util.RequestAndParametersValidator.isPairOfCodesValid;
-import static com.github.petrovyegor.currencyexchange.util.RequestAndParametersValidator.isRateValid;
+import static com.github.petrovyegor.currencyexchange.util.RequestAndParametersValidator.*;
 import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 public class ExchangeRateController extends BaseController {
+    private static final String RATE_FORMAT = "^\\d+(\\.\\d{1,6})?$";
+    private static final String CURRENCY_NOT_FOUND_MESSAGE = "Currency with code '%s' does not exist!";
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -29,45 +28,23 @@ public class ExchangeRateController extends BaseController {
     }
 
     protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        validateExchangeRatePatchRequest(request);
         String path = request.getPathInfo();
-        if (path == null){
-            throw new RestErrorException(SC_BAD_REQUEST, "Unsupported URL given. Missing slash and currency code");
-        }
+        validatePath(path);
         String pair = path.replaceFirst("/", "").toUpperCase();
-        if (!isPairOfCodesValid(pair)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, "Pair of currency codes parameter is not valid");
-        }
+        validatePairOfCodes(pair);
 
-        String body = request.getReader().lines().collect(Collectors.joining());//rate=0.22
-        if (!isPatchRequestValid(body)) {
-            throw new InvalidRequestException(SC_BAD_REQUEST, "Rate request parameter is missing");
-        }
-        BigDecimal rate;
-        try {
-            rate = new BigDecimal(body.substring(5));
-        } catch (NumberFormatException e) {
-            throw new InvalidParamException(SC_BAD_REQUEST, "An incorrect value was entered for the rate parameter");
-        }
+        String rateParam = request.getParameter("rate");
+        validateRateFormat(rateParam);
 
-        if (!isRateValid(rate)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, "The rate must be greater than 0 and less than 1000");
-        }
-        String baseCode = pair.substring(0, 3);
-        String targetCode = pair.substring(3);
+        BigDecimal rate = new BigDecimal(rateParam);
+        validateExchangeRatesPatchParameters(rate);
+        String[] codes = splitCurrencyPair(pair);
+        ensureCurrenciesExists(codes[0], codes[1]);
 
-        boolean areCurrenciesExists = currencyService.isCurrencyExists(baseCode) && currencyService.isCurrencyExists(targetCode);
-        if (!areCurrenciesExists) {
-            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no currency with base or target currency code");
-        }
+        ExchangeRateResponseDto targetExchangeRate = exchangeRateService.findByCurrencyCodes(codes[0], codes[1]);
 
-        boolean isExchangeRateExists = exchangeRateService.isExchangeRateExists(baseCode, targetCode);
-        if (!isExchangeRateExists) {
-            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, "There is no exchange rate with such pair of currency codes");
-        }
-
-        ExchangeRateResponseDto targetExchangeRate = exchangeRateService.findByCurrencyCodes(baseCode, targetCode);
-
-        ExchangeRateRequestDto exchangeRateRequestDto = new ExchangeRateRequestDto(targetExchangeRate.getId(), baseCode, targetCode, rate);
+        ExchangeRateRequestDto exchangeRateRequestDto = new ExchangeRateRequestDto(targetExchangeRate.getId(), codes[0], codes[1], rate);
         ExchangeRateResponseDto updatedExchangeRate = exchangeRateService.updateRate(exchangeRateRequestDto);
         objectMapper.writeValue(response.getWriter(), updatedExchangeRate);
     }
@@ -75,24 +52,35 @@ public class ExchangeRateController extends BaseController {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String path = request.getPathInfo();
-        if (path == null){
-            throw new RestErrorException(SC_BAD_REQUEST, "Unsupported URL given. Missing slash and currency code");
-        }
+        validatePath(path);
         String pair = path.replaceFirst("/", "").toUpperCase();
-        if (!isPairOfCodesValid(pair)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, "Pair of currency codes parameter is not valid");
-        }
-        String baseCode = pair.substring(0, 3);
-        String targetCode = pair.substring(3);
-        ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.findByCurrencyCodes(baseCode, targetCode);
+        validatePairOfCodes(pair);
+        String[] codes = splitCurrencyPair(pair);
+
+        ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.findByCurrencyCodes(codes[0], codes[1]);
         objectMapper.writeValue(response.getWriter(), exchangeRateResponseDto);
     }
 
-    private boolean isPatchRequestValid(String body) {
-        if (body.isEmpty()) {
-            return false;
+    private String[] splitCurrencyPair(String pair) {
+        return new String[]{
+                pair.substring(0, 3),
+                pair.substring(3)
+        };
+    }
+
+    private void ensureCurrenciesExists(String baseCode, String targetCode) {
+        if (!currencyService.isCurrencyExists(baseCode)) {
+            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, CURRENCY_NOT_FOUND_MESSAGE.formatted(baseCode));
         }
-        return body.substring(0, 5).equals("rate=");
+        if (!currencyService.isCurrencyExists(targetCode)) {
+            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, CURRENCY_NOT_FOUND_MESSAGE.formatted(targetCode));
+        }
+    }
+
+    private void validateRateFormat(String rate) {
+        if (rate == null || !rate.matches(RATE_FORMAT)) {
+            throw new InvalidParamException(SC_BAD_REQUEST, "Rate must be a positive number with up to 6 decimal places");
+        }
     }
 }
 

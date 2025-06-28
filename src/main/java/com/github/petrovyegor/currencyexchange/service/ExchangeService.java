@@ -15,7 +15,7 @@ public class ExchangeService {
     private final static String CROSS_CURRENCY_CODE = "USD";
     private final static int ROUND_PRECISION = 2;
     private final static BigDecimal RATE_CALCULATION_DIVIDENT = new BigDecimal(1);
-    ExchangeRateService exchangeRateService = new ExchangeRateService();
+    private final ExchangeRateService exchangeRateService = new ExchangeRateService();
     private final static int DIVISION_PRECISION = 2;
     private static final int BIGDECIMAL_PRECISION = 2;
 

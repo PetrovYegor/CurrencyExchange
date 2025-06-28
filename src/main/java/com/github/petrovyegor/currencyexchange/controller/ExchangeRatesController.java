@@ -17,6 +17,7 @@ import static jakarta.servlet.http.HttpServletResponse.*;
 public class ExchangeRatesController extends BaseController {
     private static String CURRENCY_NOT_FOUND_MESSAGE = "Currency with code '%s' does not exist!";
     private static String EXCHANGE_RATE_ALREADY_EXISTS_MESSAGE = "Exchange rate with base currency code '%s' and target currency code '%s' already exists!";
+    private static final String RATE_FORMAT = "^\\d+(\\.\\d{1,6})?$";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -29,7 +30,10 @@ public class ExchangeRatesController extends BaseController {
 
         String baseCode = request.getParameter("baseCurrencyCode").toUpperCase();
         String targetCode = request.getParameter("targetCurrencyCode").toUpperCase();
-        BigDecimal rate = getRateFromRequest(request);
+        String rateParam = request.getParameter("rate");
+        validateRateFormat(rateParam);
+
+        BigDecimal rate = new BigDecimal(rateParam);
 
         validateExchangeRatesPostParameters(baseCode, targetCode, rate);
         ensureCurrenciesExists(baseCode, targetCode);
@@ -40,14 +44,6 @@ public class ExchangeRatesController extends BaseController {
         ExchangeRateResponseDto createdExchangeRate = exchangeRateService.createExchangeRate(exchangeRateRequestDto);
         response.setStatus(SC_CREATED);
         objectMapper.writeValue(response.getWriter(), createdExchangeRate);
-    }
-
-    private BigDecimal getRateFromRequest(HttpServletRequest request) {
-        try {
-            return new BigDecimal(request.getParameter("rate"));
-        } catch (NumberFormatException e) {
-            throw new InvalidParamException(SC_BAD_REQUEST, INVALID_RATE_MESSAGE);
-        }
     }
 
     private void ensureCurrenciesExists(String baseCode, String targetCode) {
@@ -62,6 +58,12 @@ public class ExchangeRatesController extends BaseController {
     private void ensureExchangeRateDoesNotExist(String baseCode, String targetCode) {
         if (exchangeRateService.isExchangeRateExists(baseCode, targetCode)) {
             throw new ExchangeRateAlreadyExistsException(SC_CONFLICT, EXCHANGE_RATE_ALREADY_EXISTS_MESSAGE.formatted(baseCode, targetCode));
+        }
+    }
+
+    private void validateRateFormat(String rate) {
+        if (rate == null || !rate.matches(RATE_FORMAT)) {
+            throw new InvalidParamException(SC_BAD_REQUEST, "Rate must be a positive number with up to 6 decimal places");
         }
     }
 }
