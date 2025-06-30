@@ -1,9 +1,9 @@
 package com.github.petrovyegor.currencyexchange.service;
 
 import com.github.petrovyegor.currencyexchange.dao.ExchangeRateDao;
-import com.github.petrovyegor.currencyexchange.dto.CurrencyResponseDto;
-import com.github.petrovyegor.currencyexchange.dto.ExchangeRateRequestDto;
-import com.github.petrovyegor.currencyexchange.dto.ExchangeRateResponseDto;
+import com.github.petrovyegor.currencyexchange.dto.currency.CurrencyResponseDto;
+import com.github.petrovyegor.currencyexchange.dto.exchange_rate.ExchangeRateRequestDto;
+import com.github.petrovyegor.currencyexchange.dto.exchange_rate.ExchangeRateResponseDto;
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 import com.github.petrovyegor.currencyexchange.model.ExchangeRate;
 import jakarta.servlet.http.HttpServletResponse;

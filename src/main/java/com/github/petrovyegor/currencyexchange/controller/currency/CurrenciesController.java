@@ -1,7 +1,8 @@
-package com.github.petrovyegor.currencyexchange.controller;
+package com.github.petrovyegor.currencyexchange.controller.currency;
 
-import com.github.petrovyegor.currencyexchange.dto.CurrencyRequestDto;
-import com.github.petrovyegor.currencyexchange.dto.CurrencyResponseDto;
+import com.github.petrovyegor.currencyexchange.controller.BaseController;
+import com.github.petrovyegor.currencyexchange.dto.currency.CurrencyRequestDto;
+import com.github.petrovyegor.currencyexchange.dto.currency.CurrencyResponseDto;
 import com.github.petrovyegor.currencyexchange.exception.CurrencyAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

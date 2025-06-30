@@ -1,4 +1,4 @@
-package com.github.petrovyegor.currencyexchange.dto;
+package com.github.petrovyegor.currencyexchange.dto.currency;
 
 public class CurrencyRequestDto {
     private String code;

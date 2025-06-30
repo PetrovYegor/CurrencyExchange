@@ -1,7 +1,8 @@
-package com.github.petrovyegor.currencyexchange.controller;
+package com.github.petrovyegor.currencyexchange.controller.exchange_rate;
 
-import com.github.petrovyegor.currencyexchange.dto.ExchangeRateRequestDto;
-import com.github.petrovyegor.currencyexchange.dto.ExchangeRateResponseDto;
+import com.github.petrovyegor.currencyexchange.controller.BaseController;
+import com.github.petrovyegor.currencyexchange.dto.exchange_rate.ExchangeRateRequestDto;
+import com.github.petrovyegor.currencyexchange.dto.exchange_rate.ExchangeRateResponseDto;
 import com.github.petrovyegor.currencyexchange.exception.ExchangeRateAlreadyExistsException;
 import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;

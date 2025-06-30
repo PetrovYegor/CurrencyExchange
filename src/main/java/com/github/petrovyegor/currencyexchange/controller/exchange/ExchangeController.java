@@ -1,7 +1,8 @@
-package com.github.petrovyegor.currencyexchange.controller;
+package com.github.petrovyegor.currencyexchange.controller.exchange;
 
-import com.github.petrovyegor.currencyexchange.dto.ExchangeRequestDto;
-import com.github.petrovyegor.currencyexchange.dto.ExchangeResponseDto;
+import com.github.petrovyegor.currencyexchange.controller.BaseController;
+import com.github.petrovyegor.currencyexchange.dto.exchange.ExchangeRequestDto;
+import com.github.petrovyegor.currencyexchange.dto.exchange.ExchangeResponseDto;
 import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 import jakarta.servlet.http.HttpServletRequest;

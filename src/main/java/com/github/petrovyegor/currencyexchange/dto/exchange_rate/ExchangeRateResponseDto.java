@@ -1,4 +1,6 @@
-package com.github.petrovyegor.currencyexchange.dto;
+package com.github.petrovyegor.currencyexchange.dto.exchange_rate;
+
+import com.github.petrovyegor.currencyexchange.dto.currency.CurrencyResponseDto;
 
 import java.math.BigDecimal;
 

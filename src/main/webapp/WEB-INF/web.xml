@@ -50,23 +50,23 @@
 
     <servlet>
         <servlet-name>CurrencyController</servlet-name>
-        <servlet-class>com.github.petrovyegor.currencyexchange.controller.CurrencyController</servlet-class>
+        <servlet-class>com.github.petrovyegor.currencyexchange.controller.currency.CurrencyController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>CurrenciesController</servlet-name>
-        <servlet-class>com.github.petrovyegor.currencyexchange.controller.CurrenciesController</servlet-class>
+        <servlet-class>com.github.petrovyegor.currencyexchange.controller.currency.CurrenciesController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ExchangeRatesController</servlet-name>
-        <servlet-class>com.github.petrovyegor.currencyexchange.controller.ExchangeRatesController</servlet-class>
+        <servlet-class>com.github.petrovyegor.currencyexchange.controller.exchange_rate.ExchangeRatesController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ExchangeRateController</servlet-name>
-        <servlet-class>com.github.petrovyegor.currencyexchange.controller.ExchangeRateController</servlet-class>
+        <servlet-class>com.github.petrovyegor.currencyexchange.controller.exchange_rate.ExchangeRateController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ExchangeController</servlet-name>
-        <servlet-class>com.github.petrovyegor.currencyexchange.controller.ExchangeController</servlet-class>
+        <servlet-class>com.github.petrovyegor.currencyexchange.controller.exchange.ExchangeController</servlet-class>
     </servlet>
 
     <servlet-mapping>

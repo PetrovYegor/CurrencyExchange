@@ -1,4 +1,4 @@
-package com.github.petrovyegor.currencyexchange.dto;
+package com.github.petrovyegor.currencyexchange.dto.exchange;
 
 import java.math.BigDecimal;
 
