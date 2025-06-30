@@ -35,7 +35,7 @@ public final class ExchangeRateDao {
                 int id = resultSet.getInt("id");
                 int baseCurrencyId = resultSet.getInt("basecurrencyid");
                 int targetCurrencyId = resultSet.getInt("targetcurrencyid");
-                BigDecimal rate = new BigDecimal(resultSet.getDouble("rate")).setScale(BIGDECIMAL_PRECISION, RoundingMode.HALF_UP);
+                BigDecimal rate = new BigDecimal(resultSet.getDouble("rate")).setScale(BIGDECIMAL_PRECISION, RoundingMode.HALF_DOWN);
                 result.add(new ExchangeRate(id, baseCurrencyId, targetCurrencyId, rate));
             }
             return result;
@@ -57,7 +57,7 @@ public final class ExchangeRateDao {
                 int id = resultSet.getInt("id");
                 int baseCurrencyId = resultSet.getInt("basecurrencyid");
                 int targetCurrencyId = resultSet.getInt("targetcurrencyid");
-                BigDecimal rate = new BigDecimal(resultSet.getDouble("rate")).setScale(BIGDECIMAL_PRECISION, RoundingMode.HALF_UP);
+                BigDecimal rate = new BigDecimal(resultSet.getDouble("rate")).setScale(BIGDECIMAL_PRECISION, RoundingMode.HALF_DOWN);
                 exchangeRate = new ExchangeRate(id, baseCurrencyId, targetCurrencyId, rate);
             }
             return Optional.ofNullable(exchangeRate);

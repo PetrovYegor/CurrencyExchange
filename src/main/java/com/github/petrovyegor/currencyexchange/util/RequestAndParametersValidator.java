@@ -5,11 +5,9 @@ import com.github.petrovyegor.currencyexchange.exception.InvalidRequestException
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
@@ -94,7 +92,8 @@ public class RequestAndParametersValidator {
         validateRate(rate);
     }
 
-    public static void validateExchangeRatesPatchParameters(BigDecimal rate) {
+    public static void validateExchangeRatesPatchParameters(String pairOfCodes, BigDecimal rate) {
+        validatePairOfCodes(pairOfCodes);
         validateRate(rate);
     }
 
@@ -151,17 +150,15 @@ public class RequestAndParametersValidator {
         return amount.compareTo(MIN_AMOUNT_VALUE) > 0 && amount.compareTo(MAX_AMOUNT_VALUE) < 0;
     }
 
-    private static boolean isPatchRequestValid(HttpServletRequest request) throws IOException {
-        String body = request.getReader().lines().collect(Collectors.joining());
+    private static boolean isPatchRequestBodyValid(String body) {
         if (body.isEmpty() || body.length() < 5) {
             return false;
         }
         return body.substring(0, 5).equals("rate=");
     }
 
-    public static void validateExchangeRatePatchRequest(HttpServletRequest request) throws IOException {
-        boolean isValid = isPatchRequestValid(request);
-        if (!isValid) {
+    public static void validateExchangeRatePatchRequestBody(String body) {
+        if (!isPatchRequestBodyValid(body)) {
             throw new InvalidRequestException(SC_BAD_REQUEST, INVALID_EXCHANGE_RATE_PATCH_REQUEST_MESSAGE);
         }
     }

@@ -9,12 +9,14 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.stream.Collectors;
 
 import static com.github.petrovyegor.currencyexchange.util.RequestAndParametersValidator.*;
 import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 public class ExchangeRateController extends BaseController {
     private static final String RATE_FORMAT = "^\\d+(\\.\\d{1,6})?$";
+    private static final int BEGIN_INDEX_FOR_SUBSTRING_RATE = 5;
     private static final String CURRENCY_NOT_FOUND_MESSAGE = "Currency with code '%s' does not exist!";
     private static final String INVALID_RATE_FORMAT_MESSAGE = "Rate must be a positive number with up to 6 decimal places";
 
@@ -29,17 +31,18 @@ public class ExchangeRateController extends BaseController {
     }
 
     protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        validateExchangeRatePatchRequest(request);
+        String body = request.getReader().lines().collect(Collectors.joining());
+        validateExchangeRatePatchRequestBody(body);
         String path = request.getPathInfo();
         validatePath(path);
-        String pair = path.replaceFirst("/", "").toUpperCase();
-        validatePairOfCodes(pair);
 
-        String rateParam = request.getParameter("rate");
+        String rateParam = getRateParameter(body);
         validateRateFormat(rateParam);
 
         BigDecimal rate = new BigDecimal(rateParam);
-        validateExchangeRatesPatchParameters(rate);
+        String pair = path.replaceFirst("/", "").toUpperCase();
+        validateExchangeRatesPatchParameters(pair, rate);
+
         String[] codes = splitCurrencyPair(pair);
         ensureCurrenciesExists(codes[0], codes[1]);
 
@@ -82,6 +85,10 @@ public class ExchangeRateController extends BaseController {
         if (rate == null || !rate.matches(RATE_FORMAT)) {
             throw new InvalidParamException(SC_BAD_REQUEST, INVALID_RATE_FORMAT_MESSAGE);
         }
+    }
+
+    private String getRateParameter(String body) {
+        return body.substring(BEGIN_INDEX_FOR_SUBSTRING_RATE);
     }
 }
 

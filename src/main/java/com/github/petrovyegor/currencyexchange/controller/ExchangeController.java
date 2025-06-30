@@ -17,6 +17,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 public class ExchangeController extends BaseController {
     private static final String INVALID_AMOUNT_MESSAGE = "The amount cannot be empty, must contain only digits";
     private static final String CURRENCY_NOT_FOUND_MESSAGE = "Currency with code '%s' does not exist!";
+    private static final String EQUALS_CODES_MESSAGE = "Currency codes should not be equals";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -24,6 +25,7 @@ public class ExchangeController extends BaseController {
 
         String baseCode = request.getParameter("from");
         String targetCode = request.getParameter("to");
+        ensureCodesNotEquals(baseCode, targetCode);
 
         BigDecimal amount = getAmountFromRequest(request);
         validateExchageGetParameters(baseCode, targetCode, amount);
@@ -49,6 +51,12 @@ public class ExchangeController extends BaseController {
         }
         if (!currencyService.isCurrencyExists(targetCode)) {
             throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, CURRENCY_NOT_FOUND_MESSAGE.formatted(targetCode));
+        }
+    }
+
+    private void ensureCodesNotEquals(String baseCode, String targetCode) {
+        if (baseCode.equals(targetCode)) {
+            throw new InvalidParamException(SC_BAD_REQUEST, EQUALS_CODES_MESSAGE);
         }
     }
 }
