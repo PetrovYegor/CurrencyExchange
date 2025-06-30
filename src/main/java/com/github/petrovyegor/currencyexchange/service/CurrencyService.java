@@ -3,6 +3,7 @@ package com.github.petrovyegor.currencyexchange.service;
 import com.github.petrovyegor.currencyexchange.dao.CurrencyDao;
 import com.github.petrovyegor.currencyexchange.dto.currency.CurrencyRequestDto;
 import com.github.petrovyegor.currencyexchange.dto.currency.CurrencyResponseDto;
+import com.github.petrovyegor.currencyexchange.exception.ErrorMessage;
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 import com.github.petrovyegor.currencyexchange.model.Currency;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,8 +13,6 @@ import java.util.List;
 
 public class CurrencyService {
     private final CurrencyDao currencyDao = new CurrencyDao();
-    private static String CURRENCY_NOT_FOUND_BY_CODE_MESSAGE = "Currency with code '%s' does not exist!";
-    private static String CURRENCY_NOT_FOUND_BY_ID_MESSAGE = "Currency with id '%s' does not exist!";
 
     public CurrencyResponseDto createCurrency(CurrencyRequestDto currencyRequestDto) {
         Currency currency = currencyDao.save(toCurrency(currencyRequestDto));
@@ -31,7 +30,7 @@ public class CurrencyService {
 
     public CurrencyResponseDto findByCode(String code) {
         Currency currency = currencyDao.findByCode(code)
-                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, CURRENCY_NOT_FOUND_BY_CODE_MESSAGE.formatted(code)));
+                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND_BY_CODE_MESSAGE.formatted(code)));
         return toDTO(currency);
     }
 
@@ -49,7 +48,7 @@ public class CurrencyService {
 
     public CurrencyResponseDto findById(int id) {
         Currency currency = currencyDao.findById(id)
-                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, CURRENCY_NOT_FOUND_BY_ID_MESSAGE.formatted(id)));
+                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND_BY_ID_MESSAGE.formatted(id)));
         return toDTO(currency);
     }
 }

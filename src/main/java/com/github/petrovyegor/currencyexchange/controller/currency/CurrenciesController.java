@@ -4,6 +4,7 @@ import com.github.petrovyegor.currencyexchange.controller.BaseController;
 import com.github.petrovyegor.currencyexchange.dto.currency.CurrencyRequestDto;
 import com.github.petrovyegor.currencyexchange.dto.currency.CurrencyResponseDto;
 import com.github.petrovyegor.currencyexchange.exception.CurrencyAlreadyExistsException;
+import com.github.petrovyegor.currencyexchange.exception.ErrorMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -15,7 +16,6 @@ import static jakarta.servlet.http.HttpServletResponse.SC_CONFLICT;
 import static jakarta.servlet.http.HttpServletResponse.SC_CREATED;
 
 public class CurrenciesController extends BaseController {
-    private static final String CURRENCY_ALREADY_EXISTS_MESSAGE = "Currency with code '%s' already exists!";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -40,7 +40,7 @@ public class CurrenciesController extends BaseController {
 
     private void ensureCurrencyDoesNotExist(String code) {
         if (currencyService.isCurrencyExists(code)) {
-            throw new CurrencyAlreadyExistsException(SC_CONFLICT, CURRENCY_ALREADY_EXISTS_MESSAGE.formatted(code)
+            throw new CurrencyAlreadyExistsException(SC_CONFLICT, ErrorMessage.CURRENCY_ALREADY_EXISTS_MESSAGE.formatted(code)
             );
         }
     }

@@ -3,6 +3,7 @@ package com.github.petrovyegor.currencyexchange.controller.exchange_rate;
 import com.github.petrovyegor.currencyexchange.controller.BaseController;
 import com.github.petrovyegor.currencyexchange.dto.exchange_rate.ExchangeRateRequestDto;
 import com.github.petrovyegor.currencyexchange.dto.exchange_rate.ExchangeRateResponseDto;
+import com.github.petrovyegor.currencyexchange.exception.ErrorMessage;
 import com.github.petrovyegor.currencyexchange.exception.ExchangeRateAlreadyExistsException;
 import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
@@ -17,10 +18,6 @@ import static com.github.petrovyegor.currencyexchange.util.RequestAndParametersV
 import static jakarta.servlet.http.HttpServletResponse.*;
 
 public class ExchangeRatesController extends BaseController {
-    private static final String CURRENCY_NOT_FOUND_MESSAGE = "Currency with code '%s' does not exist!";
-    private static final String EXCHANGE_RATE_ALREADY_EXISTS_MESSAGE = "Exchange rate with base currency code '%s' and target currency code '%s' already exists!";
-    private static final String EQUALS_CODES_MESSAGE = "Currency codes should not be equals";
-    private static final String INVALID_RATE_FORMAT_MESSAGE = "Rate must be a positive number with up to 6 decimal places";
     private static final String RATE_FORMAT = "^\\d+(\\.\\d{1,6})?$";
 
     @Override
@@ -54,28 +51,28 @@ public class ExchangeRatesController extends BaseController {
 
     private void ensureCurrenciesExists(String baseCode, String targetCode) {
         if (!currencyService.isCurrencyExists(baseCode)) {
-            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, CURRENCY_NOT_FOUND_MESSAGE.formatted(baseCode));
+            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND_MESSAGE.formatted(baseCode));
         }
         if (!currencyService.isCurrencyExists(targetCode)) {
-            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, CURRENCY_NOT_FOUND_MESSAGE.formatted(targetCode));
+            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND_MESSAGE.formatted(targetCode));
         }
     }
 
     private void ensureExchangeRateDoesNotExist(String baseCode, String targetCode) {
         if (exchangeRateService.isExchangeRateExists(baseCode, targetCode)) {
-            throw new ExchangeRateAlreadyExistsException(SC_CONFLICT, EXCHANGE_RATE_ALREADY_EXISTS_MESSAGE.formatted(baseCode, targetCode));
+            throw new ExchangeRateAlreadyExistsException(SC_CONFLICT, ErrorMessage.EXCHANGE_RATE_ALREADY_EXISTS_MESSAGE.formatted(baseCode, targetCode));
         }
     }
 
     private void validateRateFormat(String rate) {
         if (rate == null || !rate.matches(RATE_FORMAT)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, INVALID_RATE_FORMAT_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_RATE_FORMAT_MESSAGE);
         }
     }
 
     private void ensureCodesNotEquals(String baseCode, String targetCode) {
         if (baseCode.equals(targetCode)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, EQUALS_CODES_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.EQUALS_CODES_MESSAGE);
         }
     }
 }

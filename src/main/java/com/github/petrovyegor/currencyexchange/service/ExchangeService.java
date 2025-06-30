@@ -4,6 +4,7 @@ import com.github.petrovyegor.currencyexchange.dto.currency.CurrencyResponseDto;
 import com.github.petrovyegor.currencyexchange.dto.exchange_rate.ExchangeRateResponseDto;
 import com.github.petrovyegor.currencyexchange.dto.exchange.ExchangeRequestDto;
 import com.github.petrovyegor.currencyexchange.dto.exchange.ExchangeResponseDto;
+import com.github.petrovyegor.currencyexchange.exception.ErrorMessage;
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 
 import java.math.BigDecimal;
@@ -18,7 +19,6 @@ public class ExchangeService {
     private static final int RATE_PRECISION = 6;
     private static final int BIGDECIMAL_PRECISION = 6;
     private final ExchangeRateService exchangeRateService = new ExchangeRateService();
-    private static final String UNSUPPORTED_CONVERSION_OPERATION = "There is no direct, opposite or cross exchange rate for currency codes '%s' and '%s'";
 
     public ExchangeResponseDto convert(ExchangeRequestDto exchangeRequestDto) {
         String baseCode = exchangeRequestDto.getBaseCurrencyCode();
@@ -33,7 +33,7 @@ public class ExchangeService {
         if (isCrossConversion(baseCode, targetCode)) {
             return doCrossConversion(baseCode, targetCode, amount);
         }
-        throw new RestErrorException(SC_NOT_FOUND, String.format(UNSUPPORTED_CONVERSION_OPERATION, baseCode, targetCode));
+        throw new RestErrorException(SC_NOT_FOUND, String.format(ErrorMessage.UNSUPPORTED_CONVERSION_OPERATION, baseCode, targetCode));
     }
 
     private ExchangeResponseDto doDirectConversion(String baseCode, String targetCode, BigDecimal amount) {

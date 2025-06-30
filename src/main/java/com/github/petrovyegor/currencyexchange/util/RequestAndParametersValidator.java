@@ -1,5 +1,6 @@
 package com.github.petrovyegor.currencyexchange.util;
 
+import com.github.petrovyegor.currencyexchange.exception.ErrorMessage;
 import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
 import com.github.petrovyegor.currencyexchange.exception.InvalidRequestException;
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
@@ -21,18 +22,6 @@ public class RequestAndParametersValidator {
     private static final BigDecimal MIN_AMOUNT_VALUE = new BigDecimal(0);
     private static final BigDecimal MAX_AMOUNT_VALUE = new BigDecimal(100000);
 
-    private static final String INVALID_CURRENCY_CODE_MESSAGE = "The currency code cannot be empty, must contain 3 Latin letters";
-    private static final String INVALID_CURRENCY_NAME_MESSAGE = "The currency name cannot be empty, must contain only Latin letters and spaces, length from 1 to 50 characters";
-    private static final String INVALID_CURRENCY_SIGN_MESSAGE = "The currency sign cannot be empty, must contain only Latin letters and spaces, length from 1 to 10 characters";
-    public static final String INVALID_RATE_MESSAGE = "The exchange rate should be from 1 to 1000";
-    public static final String INVALID_AMOUNT_MESSAGE = "The amount should be from 1 to 100000";
-    public static final String INVALID_PAIR_OF_CURRENCY_CODES_MESSAGE = "The pair of currency codes cannot be empty, must contain 6 Latin letters";
-    private static final String INVALID_CURRENCY_POST_REQUEST_MESSAGE = "Currency code, name or sign are missing";
-    private static final String INVALID_EXCHANGE_RATE_POST_REQUEST_MESSAGE = "Base currency code, target currency code or exchange rate are missing";
-    private static final String INVALID_EXCHANGE_RATE_PATCH_REQUEST_MESSAGE = "There is no rate parameter in patch request body";
-    private static final String INVALID_EXCHANGE_GET_REQUEST_MESSAGE = "Base currency code, target currency code or amount are missing";
-    private static final String UNSOPPORTED_URL_MESSAGE = "Unsupported URL given. Missing slash and currency code";
-
 
     private static boolean isCodeValid(String code) {
         return code.matches(CURRENCY_CODE_PATTERN);
@@ -40,25 +29,25 @@ public class RequestAndParametersValidator {
 
     public static void validateCode(String code) {
         if (!isCodeValid(code)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, INVALID_CURRENCY_CODE_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_CODE_MESSAGE);
         }
     }
 
     public static void validateName(String name) {
         if (!isNameValid(name)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, INVALID_CURRENCY_NAME_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_NAME_MESSAGE);
         }
     }
 
     public static void validateSign(String sign) {
         if (!isSignValid(sign)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, INVALID_CURRENCY_SIGN_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_SIGN_MESSAGE);
         }
     }
 
     public static void validatePath(String path) {
         if (path == null) {
-            throw new RestErrorException(SC_BAD_REQUEST, UNSOPPORTED_URL_MESSAGE);
+            throw new RestErrorException(SC_BAD_REQUEST, ErrorMessage.UNSOPPORTED_URL_MESSAGE);
         }
     }
 
@@ -68,7 +57,7 @@ public class RequestAndParametersValidator {
 
     public static void validatePairOfCodes(String pair) {
         if (!isPairOfCodesValid(pair)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, INVALID_PAIR_OF_CURRENCY_CODES_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_PAIR_OF_CURRENCY_CODES_MESSAGE);
         }
     }
 
@@ -108,7 +97,7 @@ public class RequestAndParametersValidator {
         Set<String> requiredParameters = Set.of("code", "name", "sign");
         boolean isValid = parameters.keySet().containsAll(requiredParameters);
         if (!isValid) {
-            throw new InvalidRequestException(SC_BAD_REQUEST, INVALID_CURRENCY_POST_REQUEST_MESSAGE);
+            throw new InvalidRequestException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_POST_REQUEST_MESSAGE);
         }
     }
 
@@ -117,7 +106,7 @@ public class RequestAndParametersValidator {
         Set<String> requiredParameters = Set.of("baseCurrencyCode", "targetCurrencyCode", "rate");
         boolean isValid = parameters.keySet().containsAll(requiredParameters);
         if (!isValid) {
-            throw new InvalidRequestException(SC_BAD_REQUEST, INVALID_EXCHANGE_RATE_POST_REQUEST_MESSAGE);
+            throw new InvalidRequestException(SC_BAD_REQUEST, ErrorMessage.INVALID_EXCHANGE_RATE_POST_REQUEST_MESSAGE);
         }
     }
 
@@ -126,7 +115,7 @@ public class RequestAndParametersValidator {
         Set<String> requiredParameters = Set.of("from", "to", "amount");
         boolean isValid = parameters.keySet().containsAll(requiredParameters);
         if (!isValid) {
-            throw new InvalidRequestException(SC_BAD_REQUEST, INVALID_EXCHANGE_GET_REQUEST_MESSAGE);
+            throw new InvalidRequestException(SC_BAD_REQUEST, ErrorMessage.INVALID_EXCHANGE_GET_REQUEST_MESSAGE);
         }
     }
 
@@ -136,13 +125,13 @@ public class RequestAndParametersValidator {
 
     public static void validateRate(BigDecimal rate) {
         if (!isRateValid(rate)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, INVALID_RATE_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_RATE_MESSAGE);
         }
     }
 
     public static void validateAmount(BigDecimal amount) {
         if (!isAmountValid(amount)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, INVALID_AMOUNT_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_AMOUNT_MESSAGE);
         }
     }
 
@@ -159,7 +148,7 @@ public class RequestAndParametersValidator {
 
     public static void validateExchangeRatePatchRequestBody(String body) {
         if (!isPatchRequestBodyValid(body)) {
-            throw new InvalidRequestException(SC_BAD_REQUEST, INVALID_EXCHANGE_RATE_PATCH_REQUEST_MESSAGE);
+            throw new InvalidRequestException(SC_BAD_REQUEST, ErrorMessage.INVALID_EXCHANGE_RATE_PATCH_REQUEST_MESSAGE);
         }
     }
 }
