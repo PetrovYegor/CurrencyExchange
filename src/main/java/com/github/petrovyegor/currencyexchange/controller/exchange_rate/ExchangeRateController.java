@@ -74,16 +74,16 @@ public class ExchangeRateController extends BaseController {
 
     private void ensureCurrenciesExists(String baseCode, String targetCode) {
         if (!currencyService.isCurrencyExists(baseCode)) {
-            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND_MESSAGE.formatted(baseCode));
+            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND.formatted(baseCode));
         }
         if (!currencyService.isCurrencyExists(targetCode)) {
-            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND_MESSAGE.formatted(targetCode));
+            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND.formatted(targetCode));
         }
     }
 
     private void validateRateFormat(String rate) {
         if (rate == null || !rate.matches(RATE_FORMAT)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_RATE_FORMAT_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_RATE_FORMAT);
         }
     }
 

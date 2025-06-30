@@ -40,22 +40,22 @@ public class ExchangeController extends BaseController {
         try {
             return new BigDecimal(request.getParameter("amount"));
         } catch (NumberFormatException e) {
-            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_AMOUNT_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_AMOUNT);
         }
     }
 
     private void ensureCurrenciesExists(String baseCode, String targetCode) {
         if (!currencyService.isCurrencyExists(baseCode)) {
-            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND_MESSAGE.formatted(baseCode));
+            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND.formatted(baseCode));
         }
         if (!currencyService.isCurrencyExists(targetCode)) {
-            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND_MESSAGE.formatted(targetCode));
+            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND.formatted(targetCode));
         }
     }
 
     private void ensureCodesNotEquals(String baseCode, String targetCode) {
         if (baseCode.equals(targetCode)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.EQUALS_CODES_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.EQUAL_CODES);
         }
     }
 }

@@ -34,7 +34,7 @@ public class ExchangeRateService {
 
     public ExchangeRateResponseDto findByCurrencyCodes(String baseCode, String targetCode) {
         ExchangeRate exchangeRate = exchangeRateDao.findByCurrencyCodes(baseCode, targetCode)
-                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.EXCHANGE_RATE_DOES_NOT_EXIST_MESSAGE.formatted(baseCode, targetCode)));
+                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.EXCHANGE_RATE_DOES_NOT_EXIST.formatted(baseCode, targetCode)));
         return toDto(exchangeRate);
     }
 

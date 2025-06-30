@@ -1,6 +1,7 @@
 package com.github.petrovyegor.currencyexchange.dao;
 
 import com.github.petrovyegor.currencyexchange.exception.DBException;
+import com.github.petrovyegor.currencyexchange.exception.ErrorMessage;
 import com.github.petrovyegor.currencyexchange.model.Currency;
 import com.github.petrovyegor.currencyexchange.util.DataSource;
 
@@ -36,7 +37,7 @@ public final class CurrencyDao {
             }
             return Optional.ofNullable(currency);
         } catch (SQLException e) {
-            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format("Failed to get currency by code '%s'", code));
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format(ErrorMessage.FAILED_TO_GET_CURRENCY_BY_CODE, code));
         }
     }
 
@@ -54,7 +55,7 @@ public final class CurrencyDao {
             }
             return result;
         } catch (SQLException e) {
-            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format("Failed to get all currencies"));
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, ErrorMessage.FAILED_TO_GET_ALL_CURRENCIES);
         }
     }
 
@@ -70,7 +71,7 @@ public final class CurrencyDao {
             currency.setId(resultSet.getInt(1));
             return currency;
         } catch (SQLException e) {
-            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format("Failed to save currency with code '%s', fullname '%s', sign '%s'", currency.getCode(), currency.getName(), currency.getSign()));
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format(ErrorMessage.FAILED_TO_SAVE_CURRENCY, currency.getCode(), currency.getName(), currency.getSign()));
         }
     }
 
@@ -92,7 +93,7 @@ public final class CurrencyDao {
             }
             return Optional.ofNullable(currency);
         } catch (SQLException e) {
-            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format("Failed to get currency by id '%s'", id));
+            throw new DBException(SC_INTERNAL_SERVER_ERROR, String.format(ErrorMessage.FAILED_TO_GET_CURRENCY_BY_ID, id));
         }
     }
 }

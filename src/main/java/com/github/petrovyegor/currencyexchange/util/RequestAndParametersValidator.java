@@ -29,25 +29,25 @@ public class RequestAndParametersValidator {
 
     public static void validateCode(String code) {
         if (!isCodeValid(code)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_CODE_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_CODE);
         }
     }
 
     public static void validateName(String name) {
         if (!isNameValid(name)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_NAME_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_NAME);
         }
     }
 
     public static void validateSign(String sign) {
         if (!isSignValid(sign)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_SIGN_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_SIGN);
         }
     }
 
     public static void validatePath(String path) {
         if (path == null) {
-            throw new RestErrorException(SC_BAD_REQUEST, ErrorMessage.UNSOPPORTED_URL_MESSAGE);
+            throw new RestErrorException(SC_BAD_REQUEST, ErrorMessage.UNSOPPORTED_URL);
         }
     }
 
@@ -57,7 +57,7 @@ public class RequestAndParametersValidator {
 
     public static void validatePairOfCodes(String pair) {
         if (!isPairOfCodesValid(pair)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_PAIR_OF_CURRENCY_CODES_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_PAIR_OF_CURRENCY_CODES);
         }
     }
 
@@ -97,7 +97,7 @@ public class RequestAndParametersValidator {
         Set<String> requiredParameters = Set.of("code", "name", "sign");
         boolean isValid = parameters.keySet().containsAll(requiredParameters);
         if (!isValid) {
-            throw new InvalidRequestException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_POST_REQUEST_MESSAGE);
+            throw new InvalidRequestException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_POST_REQUEST);
         }
     }
 
@@ -106,7 +106,7 @@ public class RequestAndParametersValidator {
         Set<String> requiredParameters = Set.of("baseCurrencyCode", "targetCurrencyCode", "rate");
         boolean isValid = parameters.keySet().containsAll(requiredParameters);
         if (!isValid) {
-            throw new InvalidRequestException(SC_BAD_REQUEST, ErrorMessage.INVALID_EXCHANGE_RATE_POST_REQUEST_MESSAGE);
+            throw new InvalidRequestException(SC_BAD_REQUEST, ErrorMessage.INVALID_EXCHANGE_RATE_POST_REQUEST);
         }
     }
 
@@ -115,7 +115,7 @@ public class RequestAndParametersValidator {
         Set<String> requiredParameters = Set.of("from", "to", "amount");
         boolean isValid = parameters.keySet().containsAll(requiredParameters);
         if (!isValid) {
-            throw new InvalidRequestException(SC_BAD_REQUEST, ErrorMessage.INVALID_EXCHANGE_GET_REQUEST_MESSAGE);
+            throw new InvalidRequestException(SC_BAD_REQUEST, ErrorMessage.INVALID_EXCHANGE_GET_REQUEST);
         }
     }
 
@@ -125,13 +125,13 @@ public class RequestAndParametersValidator {
 
     public static void validateRate(BigDecimal rate) {
         if (!isRateValid(rate)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_RATE_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_RATE);
         }
     }
 
     public static void validateAmount(BigDecimal amount) {
         if (!isAmountValid(amount)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_AMOUNT_MESSAGE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_AMOUNT);
         }
     }
 
@@ -148,7 +148,7 @@ public class RequestAndParametersValidator {
 
     public static void validateExchangeRatePatchRequestBody(String body) {
         if (!isPatchRequestBodyValid(body)) {
-            throw new InvalidRequestException(SC_BAD_REQUEST, ErrorMessage.INVALID_EXCHANGE_RATE_PATCH_REQUEST_MESSAGE);
+            throw new InvalidRequestException(SC_BAD_REQUEST, ErrorMessage.INVALID_EXCHANGE_RATE_PATCH_REQUEST);
         }
     }
 }

@@ -40,7 +40,7 @@ public class CurrenciesController extends BaseController {
 
     private void ensureCurrencyDoesNotExist(String code) {
         if (currencyService.isCurrencyExists(code)) {
-            throw new CurrencyAlreadyExistsException(SC_CONFLICT, ErrorMessage.CURRENCY_ALREADY_EXISTS_MESSAGE.formatted(code)
+            throw new CurrencyAlreadyExistsException(SC_CONFLICT, ErrorMessage.CURRENCY_ALREADY_EXISTS.formatted(code)
             );
         }
     }

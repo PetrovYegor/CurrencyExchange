@@ -30,7 +30,7 @@ public class CurrencyService {
 
     public CurrencyResponseDto findByCode(String code) {
         Currency currency = currencyDao.findByCode(code)
-                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND_BY_CODE_MESSAGE.formatted(code)));
+                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND_BY_CODE.formatted(code)));
         return toDTO(currency);
     }
 
@@ -48,7 +48,7 @@ public class CurrencyService {
 
     public CurrencyResponseDto findById(int id) {
         Currency currency = currencyDao.findById(id)
-                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND_BY_ID_MESSAGE.formatted(id)));
+                .orElseThrow(() -> new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND_BY_ID.formatted(id)));
         return toDTO(currency);
     }
 }
