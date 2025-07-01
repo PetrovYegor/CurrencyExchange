@@ -46,10 +46,10 @@ public class ExchangeController extends BaseController {
 
     private void ensureCurrenciesExists(String baseCode, String targetCode) {
         if (!currencyService.isCurrencyExists(baseCode)) {
-            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND.formatted(baseCode));
+            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND_BY_CODE.formatted(baseCode));
         }
         if (!currencyService.isCurrencyExists(targetCode)) {
-            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND.formatted(targetCode));
+            throw new RestErrorException(HttpServletResponse.SC_NOT_FOUND, ErrorMessage.CURRENCY_NOT_FOUND_BY_CODE.formatted(targetCode));
         }
     }
 

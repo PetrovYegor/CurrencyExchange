@@ -22,53 +22,6 @@ public class RequestAndParametersValidator {
     private static final BigDecimal MIN_AMOUNT_VALUE = new BigDecimal(0);
     private static final BigDecimal MAX_AMOUNT_VALUE = new BigDecimal(100000);
 
-
-    private static boolean isCodeValid(String code) {
-        return code.matches(CURRENCY_CODE_PATTERN);
-    }
-
-    public static void validateCode(String code) {
-        if (!isCodeValid(code)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_CODE);
-        }
-    }
-
-    public static void validateName(String name) {
-        if (!isNameValid(name)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_NAME);
-        }
-    }
-
-    public static void validateSign(String sign) {
-        if (!isSignValid(sign)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_SIGN);
-        }
-    }
-
-    public static void validatePath(String path) {
-        if (path == null) {
-            throw new RestErrorException(SC_BAD_REQUEST, ErrorMessage.UNSOPPORTED_URL);
-        }
-    }
-
-    private static boolean isPairOfCodesValid(String pair) {
-        return pair.matches(PAIR_OF_CURRENCY_CODES_PATTERN);
-    }
-
-    public static void validatePairOfCodes(String pair) {
-        if (!isPairOfCodesValid(pair)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_PAIR_OF_CURRENCY_CODES);
-        }
-    }
-
-    public static boolean isNameValid(String name) {
-        return name.matches(CURRENCY_NAME_PATTERN);
-    }
-
-    public static boolean isSignValid(String sign) {
-        return sign.matches(CURRENCY_SIGN_PATTERN);
-    }
-
     public static void validateCurrenciesPostParameters(String code, String name, String sign) {
         validateCode(code);
         validateName(name);
@@ -119,13 +72,27 @@ public class RequestAndParametersValidator {
         }
     }
 
-    public static boolean isRateValid(BigDecimal rate) {
-        return rate.compareTo(MIN_RATE_VALUE) > 0 && rate.compareTo(MAX_RATE_VALUE) < 0;
+    public static void validateCode(String code) {
+        if (!isCodeValid(code)) {
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_CODE);
+        }
+    }
+
+    public static void validateName(String name) {
+        if (!isNameValid(name)) {
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_NAME);
+        }
+    }
+
+    public static void validateExchangeRatePatchRequestBody(String body) {
+        if (!isPatchRequestBodyValid(body)) {
+            throw new InvalidRequestException(SC_BAD_REQUEST, ErrorMessage.INVALID_EXCHANGE_RATE_PATCH_REQUEST);
+        }
     }
 
     public static void validateRate(BigDecimal rate) {
         if (!isRateValid(rate)) {
-            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_RATE);
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_RATE_FORMAT);
         }
     }
 
@@ -133,6 +100,40 @@ public class RequestAndParametersValidator {
         if (!isAmountValid(amount)) {
             throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_AMOUNT);
         }
+    }
+
+    public static void validateSign(String sign) {
+        if (!isSignValid(sign)) {
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_CURRENCY_SIGN);
+        }
+    }
+
+    public static void validatePath(String path) {
+        if (path == null) {
+            throw new RestErrorException(SC_BAD_REQUEST, ErrorMessage.UNSOPPORTED_URL);
+        }
+    }
+
+    public static void validatePairOfCodes(String pair) {
+        if (!isPairOfCodesValid(pair)) {
+            throw new InvalidParamException(SC_BAD_REQUEST, ErrorMessage.INVALID_PAIR_OF_CURRENCY_CODES);
+        }
+    }
+
+    private static boolean isPairOfCodesValid(String pair) {
+        return pair.matches(PAIR_OF_CURRENCY_CODES_PATTERN);
+    }
+
+    public static boolean isNameValid(String name) {
+        return name.matches(CURRENCY_NAME_PATTERN);
+    }
+
+    public static boolean isSignValid(String sign) {
+        return sign.matches(CURRENCY_SIGN_PATTERN);
+    }
+
+    public static boolean isRateValid(BigDecimal rate) {
+        return rate.compareTo(MIN_RATE_VALUE) > 0 && rate.compareTo(MAX_RATE_VALUE) < 0;
     }
 
     private static boolean isAmountValid(BigDecimal amount) {
@@ -146,9 +147,7 @@ public class RequestAndParametersValidator {
         return body.substring(0, 5).equals("rate=");
     }
 
-    public static void validateExchangeRatePatchRequestBody(String body) {
-        if (!isPatchRequestBodyValid(body)) {
-            throw new InvalidRequestException(SC_BAD_REQUEST, ErrorMessage.INVALID_EXCHANGE_RATE_PATCH_REQUEST);
-        }
+    private static boolean isCodeValid(String code) {
+        return code.matches(CURRENCY_CODE_PATTERN);
     }
 }
