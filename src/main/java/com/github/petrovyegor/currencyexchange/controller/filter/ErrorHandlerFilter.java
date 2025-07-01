@@ -23,9 +23,7 @@ public class ErrorHandlerFilter implements Filter {
             sendError(e.getCode(), e.getMessage(), response);
         } catch (InvalidRequestException e) {
             sendError(e.getCode(), e.getMessage(), response);
-        } catch (CurrencyAlreadyExistsException e) {
-            sendError(e.getCode(), e.getMessage(), response);
-        } catch (ExchangeRateAlreadyExistsException e) {
+        } catch (AlreadyExistsException e) {
             sendError(e.getCode(), e.getMessage(), response);
         } catch (RestErrorException e) {
             sendError(e.getCode(), e.getMessage(), response);

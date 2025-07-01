@@ -1,10 +1,10 @@
 package com.github.petrovyegor.currencyexchange.exception;
 
-public final class CurrencyAlreadyExistsException extends RuntimeException {
+public final class AlreadyExistsException extends RuntimeException {
     private int code;
     private String message;
 
-    public CurrencyAlreadyExistsException(int code, String message) {
+    public AlreadyExistsException(int code, String message) {
         this.code = code;
         this.message = message;
     }

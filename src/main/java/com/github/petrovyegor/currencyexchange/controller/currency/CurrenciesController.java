@@ -3,7 +3,7 @@ package com.github.petrovyegor.currencyexchange.controller.currency;
 import com.github.petrovyegor.currencyexchange.controller.BaseController;
 import com.github.petrovyegor.currencyexchange.dto.currency.CurrencyRequestDto;
 import com.github.petrovyegor.currencyexchange.dto.currency.CurrencyResponseDto;
-import com.github.petrovyegor.currencyexchange.exception.CurrencyAlreadyExistsException;
+import com.github.petrovyegor.currencyexchange.exception.AlreadyExistsException;
 import com.github.petrovyegor.currencyexchange.exception.ErrorMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,7 +40,7 @@ public class CurrenciesController extends BaseController {
 
     private void ensureCurrencyDoesNotExist(String code) {
         if (currencyService.isCurrencyExists(code)) {
-            throw new CurrencyAlreadyExistsException(SC_CONFLICT, ErrorMessage.CURRENCY_ALREADY_EXISTS.formatted(code)
+            throw new AlreadyExistsException(SC_CONFLICT, ErrorMessage.CURRENCY_ALREADY_EXISTS.formatted(code)
             );
         }
     }

@@ -3,8 +3,8 @@ package com.github.petrovyegor.currencyexchange.controller.exchange_rate;
 import com.github.petrovyegor.currencyexchange.controller.BaseController;
 import com.github.petrovyegor.currencyexchange.dto.exchange_rate.ExchangeRateRequestDto;
 import com.github.petrovyegor.currencyexchange.dto.exchange_rate.ExchangeRateResponseDto;
+import com.github.petrovyegor.currencyexchange.exception.AlreadyExistsException;
 import com.github.petrovyegor.currencyexchange.exception.ErrorMessage;
-import com.github.petrovyegor.currencyexchange.exception.ExchangeRateAlreadyExistsException;
 import com.github.petrovyegor.currencyexchange.exception.InvalidParamException;
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,7 +60,7 @@ public class ExchangeRatesController extends BaseController {
 
     private void ensureExchangeRateDoesNotExist(String baseCode, String targetCode) {
         if (exchangeRateService.isExchangeRateExists(baseCode, targetCode)) {
-            throw new ExchangeRateAlreadyExistsException(SC_CONFLICT, ErrorMessage.EXCHANGE_RATE_ALREADY_EXISTS.formatted(baseCode, targetCode));
+            throw new AlreadyExistsException(SC_CONFLICT, ErrorMessage.EXCHANGE_RATE_ALREADY_EXISTS.formatted(baseCode, targetCode));
         }
     }
 
