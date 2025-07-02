@@ -1,39 +1,16 @@
 package com.github.petrovyegor.currencyexchange.dto.exchange;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 
+@AllArgsConstructor
+@Getter
+@Setter
 public class ExchangeRequestDto {
     private String baseCurrencyCode;
     private String targetCurrencyCode;
     private BigDecimal amount;
-
-    public ExchangeRequestDto(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) {
-        this.baseCurrencyCode = baseCurrencyCode;
-        this.targetCurrencyCode = targetCurrencyCode;
-        this.amount = amount;
-    }
-
-    public String getBaseCurrencyCode() {
-        return baseCurrencyCode;
-    }
-
-    public void setBaseCurrencyCode(String baseCurrencyCode) {
-        this.baseCurrencyCode = baseCurrencyCode;
-    }
-
-    public String getTargetCurrencyCode() {
-        return targetCurrencyCode;
-    }
-
-    public void setTargetCurrencyCode(String targetCurrencyCode) {
-        this.targetCurrencyCode = targetCurrencyCode;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
 }
