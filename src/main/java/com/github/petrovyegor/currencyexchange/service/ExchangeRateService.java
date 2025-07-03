@@ -52,10 +52,10 @@ public class ExchangeRateService {
     }
 
     private ExchangeRate toExchangeRate(ExchangeRateRequestDto source) {
-        int id = source.getId();
-        int baseCurrencyId = currencyService.findByCode(source.getBaseCurrencyCode()).getId();
-        int targetCurrencyId = currencyService.findByCode(source.getTargetCurrencyCode()).getId();
-        BigDecimal rate = source.getRate();
+        int id = source.id();
+        int baseCurrencyId = currencyService.findByCode(source.baseCurrencyCode()).id();
+        int targetCurrencyId = currencyService.findByCode(source.targetCurrencyCode()).id();
+        BigDecimal rate = source.rate();
         if (isExchangeRateNew(source)) {
             return new ExchangeRate(baseCurrencyId, targetCurrencyId, rate);
         }
@@ -63,7 +63,7 @@ public class ExchangeRateService {
     }
 
     private boolean isExchangeRateNew(ExchangeRateRequestDto source) {
-        return source.getId() == 0;
+        return source.id() == 0;
     }
 }
 

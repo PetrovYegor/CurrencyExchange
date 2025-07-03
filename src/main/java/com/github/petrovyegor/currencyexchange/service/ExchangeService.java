@@ -21,9 +21,9 @@ public class ExchangeService {
     private final ExchangeRateService exchangeRateService = new ExchangeRateService();
 
     public ExchangeResponseDto convert(ExchangeRequestDto exchangeRequestDto) {
-        String baseCode = exchangeRequestDto.getBaseCurrencyCode();
-        String targetCode = exchangeRequestDto.getTargetCurrencyCode();
-        BigDecimal amount = exchangeRequestDto.getAmount();
+        String baseCode = exchangeRequestDto.baseCurrencyCode();
+        String targetCode = exchangeRequestDto.targetCurrencyCode();
+        BigDecimal amount = exchangeRequestDto.amount();
         if (isDirectConversion(baseCode, targetCode)) {
             return doDirectConversion(baseCode, targetCode, amount);
         }
@@ -38,18 +38,18 @@ public class ExchangeService {
 
     private ExchangeResponseDto doDirectConversion(String baseCode, String targetCode, BigDecimal amount) {
         ExchangeRateResponseDto exchangeRate = exchangeRateService.findByCurrencyCodes(baseCode, targetCode);
-        CurrencyResponseDto baseCurrency = exchangeRate.getBaseCurrency();
-        CurrencyResponseDto targetCurrency = exchangeRate.getTargetCurrency();
-        BigDecimal rate = exchangeRate.getRate();
+        CurrencyResponseDto baseCurrency = exchangeRate.baseCurrency();
+        CurrencyResponseDto targetCurrency = exchangeRate.targetCurrency();
+        BigDecimal rate = exchangeRate.rate();
         BigDecimal convertedAmount = getRoundedConvertedAmount(amount, rate);
         return new ExchangeResponseDto(baseCurrency, targetCurrency, rate, amount, convertedAmount);
     }
 
     private ExchangeResponseDto doReverseConversion(String baseCode, String targetCode, BigDecimal amount) {
         ExchangeRateResponseDto exchangeRate = exchangeRateService.findByCurrencyCodes(targetCode, baseCode);
-        CurrencyResponseDto baseCurrency = exchangeRate.getBaseCurrency();
-        CurrencyResponseDto targetCurrency = exchangeRate.getTargetCurrency();
-        BigDecimal rate = getRateForReverseConversion(exchangeRate.getRate());
+        CurrencyResponseDto baseCurrency = exchangeRate.baseCurrency();
+        CurrencyResponseDto targetCurrency = exchangeRate.targetCurrency();
+        BigDecimal rate = getRateForReverseConversion(exchangeRate.rate());
         BigDecimal convertedAmount = getRoundedConvertedAmount(amount, rate);
         return new ExchangeResponseDto(targetCurrency, baseCurrency, rate, amount, convertedAmount);
     }
@@ -57,13 +57,13 @@ public class ExchangeService {
     private ExchangeResponseDto doCrossConversion(String baseCode, String targetCode, BigDecimal amount) {
         ExchangeRateResponseDto sourcexchangeRate = exchangeRateService.findByCurrencyCodes(CROSS_CURRENCY_CODE, baseCode);
         ExchangeRateResponseDto targetExchangeRate = exchangeRateService.findByCurrencyCodes(CROSS_CURRENCY_CODE, targetCode);
-        BigDecimal baseCurrencyRate = sourcexchangeRate.getRate();
-        BigDecimal targetCurrencyRate = targetExchangeRate.getRate();
+        BigDecimal baseCurrencyRate = sourcexchangeRate.rate();
+        BigDecimal targetCurrencyRate = targetExchangeRate.rate();
         BigDecimal rate = getRateForCrossConversion(baseCurrencyRate, targetCurrencyRate);
         BigDecimal convertedAmount = getRoundedConvertedAmount(amount, rate);
 
-        CurrencyResponseDto baseCurrency = sourcexchangeRate.getTargetCurrency();
-        CurrencyResponseDto targetCurrency = targetExchangeRate.getTargetCurrency();
+        CurrencyResponseDto baseCurrency = sourcexchangeRate.targetCurrency();
+        CurrencyResponseDto targetCurrency = targetExchangeRate.targetCurrency();
 
         return new ExchangeResponseDto(baseCurrency, targetCurrency, rate, amount, convertedAmount);
     }

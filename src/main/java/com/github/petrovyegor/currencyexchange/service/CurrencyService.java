@@ -39,7 +39,7 @@ public class CurrencyService {
     }
 
     private Currency toCurrency(CurrencyRequestDto source) {
-        return new Currency(source.getCode(), source.getName(), source.getSign());
+        return new Currency(source.code(), source.name(), source.sign());
     }
 
     public boolean isCurrencyExists(String code) {

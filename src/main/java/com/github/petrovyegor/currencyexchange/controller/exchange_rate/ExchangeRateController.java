@@ -48,7 +48,7 @@ public class ExchangeRateController extends BaseController {
 
         ExchangeRateResponseDto targetExchangeRate = exchangeRateService.findByCurrencyCodes(codes[0], codes[1]);
 
-        ExchangeRateRequestDto exchangeRateRequestDto = new ExchangeRateRequestDto(targetExchangeRate.getId(), codes[0], codes[1], rate);
+        ExchangeRateRequestDto exchangeRateRequestDto = new ExchangeRateRequestDto(targetExchangeRate.id(), codes[0], codes[1], rate);
         ExchangeRateResponseDto updatedExchangeRate = exchangeRateService.updateRate(exchangeRateRequestDto);
         objectMapper.writeValue(response.getWriter(), updatedExchangeRate);
     }
