@@ -15,8 +15,8 @@ import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 public class RequestAndParametersValidator {
     private static final String CURRENCY_CODE_PATTERN = "[a-zA-Z]{3}";
     private static final String PAIR_OF_CURRENCY_CODES_PATTERN = "[a-zA-Z]{6}";
-    private static final String CURRENCY_NAME_PATTERN = "[a-zA-Z ]{1,50}";
-    private static final String CURRENCY_SIGN_PATTERN = "[a-zA-Z ]{1,10}";
+    private static final String CURRENCY_NAME_PATTERN = "[a-zA-Z0-9 ]{1,50}";
+    private static final String CURRENCY_SIGN_PATTERN = "[a-zA-Z0-9\\W_ ]{1,10}";
     private static final BigDecimal MIN_RATE_VALUE = new BigDecimal(0);
     private static final BigDecimal MAX_RATE_VALUE = new BigDecimal(1000);
     private static final BigDecimal MIN_AMOUNT_VALUE = new BigDecimal(0);

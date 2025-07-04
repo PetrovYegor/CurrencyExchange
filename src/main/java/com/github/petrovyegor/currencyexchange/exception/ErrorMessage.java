@@ -6,8 +6,8 @@ public class ErrorMessage {
     public static final String INVALID_CURRENCY_CODE = "The currency code cannot be empty, must contain 3 Latin letters";
 
     public static final String EQUAL_CODES = "Currency codes should not be equals";
-    public static final String INVALID_CURRENCY_NAME = "The currency name cannot be empty, must contain only Latin letters and spaces, length from 1 to 50 characters";
-    public static final String INVALID_CURRENCY_SIGN = "The currency sign cannot be empty, must contain only Latin letters and spaces, length from 1 to 10 characters";
+    public static final String INVALID_CURRENCY_NAME = "The currency name cannot be empty, length from 1 to 50 characters";
+    public static final String INVALID_CURRENCY_SIGN = "The currency sign cannot be empty, length from 1 to 10 characters";
     public static final String CURRENCY_NOT_FOUND_BY_CODE = "Currency with code '%s' does not exist!";
     public static final String CURRENCY_ALREADY_EXISTS = "Currency with code '%s' already exists!";
     public static final String FAILED_TO_GET_CURRENCY_BY_CODE = "Failed to get currency by code '%s'";
