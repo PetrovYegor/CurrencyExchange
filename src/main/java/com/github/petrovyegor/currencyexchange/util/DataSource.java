@@ -9,11 +9,12 @@ import java.sql.SQLException;
 public class DataSource {
     private static HikariConfig config = new HikariConfig();
     private static HikariDataSource dataSource;
+    private final static String DATABASE_URL = "jdbc:sqlite::resource:CurrencyExchange.sqlite";
 
-    //jdbc:sqlite:C:\\roadmap\\CurrencyExchange\\src\\main\\resources\\CurrencyExchange.sqlite
     static {
         config.setDriverClassName("org.sqlite.JDBC");
-        config.setJdbcUrl("jdbc:sqlite:C:\\roadmap\\CurrencyExchange\\src\\main\\resources\\CurrencyExchange.sqlite");
+        //config.setJdbcUrl("jdbc:sqlite:C:\\roadmap\\CurrencyExchange\\src\\main\\resources\\CurrencyExchange.sqlite");
+        config.setJdbcUrl(DATABASE_URL);
 
         config.setMaximumPoolSize(10);
         config.setMinimumIdle(5);

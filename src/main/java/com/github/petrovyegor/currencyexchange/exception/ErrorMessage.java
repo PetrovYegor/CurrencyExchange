@@ -1,9 +1,5 @@
 package com.github.petrovyegor.currencyexchange.exception;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorMessage {
     public static final String UNSOPPORTED_URL = "Unsupported URL given. Missing slash and currency code or pair of codes";
 
@@ -31,4 +27,7 @@ public class ErrorMessage {
     public static final String INVALID_AMOUNT = "The amount cannot be empty, must contain only digits. The amount should be from 1 to 100000";
     public static final String UNSUPPORTED_CONVERSION_OPERATION = "There is no direct, opposite or cross exchange rate for currency codes '%s' and '%s'";
     public static final String INVALID_EXCHANGE_GET_REQUEST = "Base currency code, target currency code or amount are missing";
+
+    private ErrorMessage() {
+    }
 }
