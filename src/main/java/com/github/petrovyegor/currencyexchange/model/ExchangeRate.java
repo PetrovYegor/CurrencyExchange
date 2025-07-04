@@ -1,12 +1,7 @@
 package com.github.petrovyegor.currencyexchange.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 import java.math.BigDecimal;
 
-@AllArgsConstructor
-@Data
 public class ExchangeRate {
     private int id;
     private int baseCurrencyId;
@@ -16,6 +11,45 @@ public class ExchangeRate {
     public ExchangeRate(int baseCurrencyId, int targetCurrencyId, BigDecimal rate) {
         this.baseCurrencyId = baseCurrencyId;
         this.targetCurrencyId = targetCurrencyId;
+        this.rate = rate;
+    }
+
+    public ExchangeRate(int id, int baseCurrencyId, int targetCurrencyId, BigDecimal rate) {
+        this.id = id;
+        this.baseCurrencyId = baseCurrencyId;
+        this.targetCurrencyId = targetCurrencyId;
+        this.rate = rate;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getBaseCurrencyId() {
+        return baseCurrencyId;
+    }
+
+    public void setBaseCurrencyId(int baseCurrencyId) {
+        this.baseCurrencyId = baseCurrencyId;
+    }
+
+    public int getTargetCurrencyId() {
+        return targetCurrencyId;
+    }
+
+    public void setTargetCurrencyId(int targetCurrencyId) {
+        this.targetCurrencyId = targetCurrencyId;
+    }
+
+    public BigDecimal getRate() {
+        return rate;
+    }
+
+    public void setRate(BigDecimal rate) {
         this.rate = rate;
     }
 }
