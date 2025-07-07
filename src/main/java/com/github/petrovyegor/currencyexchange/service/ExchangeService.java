@@ -1,9 +1,9 @@
 package com.github.petrovyegor.currencyexchange.service;
 
 import com.github.petrovyegor.currencyexchange.dto.currency.CurrencyResponseDto;
-import com.github.petrovyegor.currencyexchange.dto.exchange_rate.ExchangeRateResponseDto;
 import com.github.petrovyegor.currencyexchange.dto.exchange.ExchangeRequestDto;
 import com.github.petrovyegor.currencyexchange.dto.exchange.ExchangeResponseDto;
+import com.github.petrovyegor.currencyexchange.dto.exchange_rate.ExchangeRateResponseDto;
 import com.github.petrovyegor.currencyexchange.exception.ErrorMessage;
 import com.github.petrovyegor.currencyexchange.exception.RestErrorException;
 
