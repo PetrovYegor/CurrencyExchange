@@ -233,7 +233,22 @@ HTTP коды ответов:
     "convertedAmount": 14.50
 }
 ```
-## Запуск программы
-- клонировать репозиторий https://github.com/PetrovYegor/CurrencyExchange.git
-- Указать в настройках Tomcat -> Deployment -> Application Context: '/CurrencyExchanger' (без кавычек)
-- Запустить Tomcat
+## Локальный запуск с использованием IntelliJ IDEA Ultimate
+- Клонировать репозиторий https://github.com/PetrovYegor/CurrencyExchange.git
+- Открыть проект через Intellij IDEA Ultimate: File -> Open -> выбрать директорию с проектом (при возникновении предупреждающего окна нажать "Trust Project");
+- Выполнить скрипт для Maven нажатием на "Load";
+  ![Пример](screenshots/run0.png)
+- В IntelliJ IDEA перейти в Run -> Edit Configurations;
+  ![Пример](screenshots/run1.png)
+- В появившемся окне "Run/Debug configurations" нажать на "+", затем слева выбрать пункт "Tomcat Server", подпункт "Local";
+  ![Пример](screenshots/run2.png)
+- Во вкладке "Server" через кнопку "Configure" указать локальный путь до папки томката 10 или 11 версии (при его отсутствии скачать с официального сайта);
+  ![Пример](screenshots/run3.png)
+- В правом нижнем углу нажать "Fix", в окне "Select an artifact to deploy" выбрать пункт "CurrencyExchange:war exploded"
+  ![Пример](screenshots/run4.png)
+- Во вкладке "Deployment" в поле "Application context" заменить путь с "/CurrencyExchange_war_exploded" на "/CurrencyExchange"
+  ![Пример](screenshots/run5.png)
+  ![Пример](screenshots/run6.png)
+- Нажать "Run". Apache Maven выполнит сборку проекта и запустит его с помощью Tomcat. В браузере откроется вкладка с адресом "http://localhost:8080/CurrencyExchange/", где можно будет воспользоваться приложением через готовый UI
+  ![Пример](screenshots/run7.png)
+  ![Пример](screenshots/run8.png)
