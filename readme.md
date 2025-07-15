@@ -7,7 +7,7 @@ REST API для описания валют и обменных курсов. П
 ## Возможности приложения
 - Добавление валюты или обменного курса для пары валют;
 - Изменение существующего обменного курса;
-- Конвартация валюты из одной в другую, при наличии прямого, обратного или кросс курса:
+- Конвертация валюты из одной в другую, при наличии прямого, обратного или кросс курса:
   - при наличии прямого обменного курса - используется он;
   - если нет прямого курса, но есть обратный - используется он;
   - если нет прямого или обратного курса, но есть два обменных курса "Доллар -> валюта1" и "Доллар -> валюта2" - используется он.
@@ -238,17 +238,17 @@ HTTP коды ответов:
 - Открыть проект через Intellij IDEA Ultimate: File -> Open -> выбрать директорию с проектом (при возникновении предупреждающего окна нажать "Trust Project");
 - Выполнить скрипт для Maven нажатием на "Load";
   ![Пример](screenshots/run0.png)
-- В IntelliJ IDEA перейти в Run -> Edit Configurations;
+- В IntelliJ IDEA нажать "Current File" -> Edit Configurations;
   ![Пример](screenshots/run1.png)
 - В появившемся окне "Run/Debug configurations" нажать на "+", затем слева выбрать пункт "Tomcat Server", подпункт "Local";
   ![Пример](screenshots/run2.png)
 - Во вкладке "Server" через кнопку "Configure" указать локальный путь до папки томката 10 или 11 версии (при его отсутствии скачать с официального сайта);
   ![Пример](screenshots/run3.png)
-- В правом нижнем углу нажать "Fix", в окне "Select an artifact to deploy" выбрать пункт "CurrencyExchange:war exploded"
+- В правом нижнем углу нажать "Fix", в окне "Select an artifact to deploy" выбрать пункт "CurrencyExchange:war exploded";
   ![Пример](screenshots/run4.png)
-- Во вкладке "Deployment" в поле "Application context" заменить путь с "/CurrencyExchange_war_exploded" на "/CurrencyExchange"
+- Во вкладке "Deployment" в поле "Application context" заменить путь с "/CurrencyExchange_war_exploded" на "/CurrencyExchange";
   ![Пример](screenshots/run5.png)
   ![Пример](screenshots/run6.png)
-- Нажать "Run". Apache Maven выполнит сборку проекта и запустит его с помощью Tomcat. В браузере откроется вкладка с адресом "http://localhost:8080/CurrencyExchange/", где можно будет воспользоваться приложением через готовый UI
+- Нажать "Run". Apache Maven выполнит сборку проекта и запустит его с помощью Tomcat. В браузере откроется вкладка с адресом "http://localhost:8080/CurrencyExchange/", где можно будет воспользоваться приложением через готовый UI.
   ![Пример](screenshots/run7.png)
   ![Пример](screenshots/run8.png)
